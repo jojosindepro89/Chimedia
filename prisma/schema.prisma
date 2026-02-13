@@ -1,0 +1,152 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// User & Auth
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String?   @unique
+  emailVerified DateTime?
+  image         String?
+  role          String    @default("USER") // USER, ADMIN
+  password      String?
+  
+  subscription  Subscription?
+  orders        Order[]
+  
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+}
+
+model Subscription {
+  id        String   @id @default(cuid())
+  userId    String   @unique
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  plan      String   // WEEKLY, MONTHLY
+  startDate DateTime @default(now())
+  endDate   DateTime
+  status    String   @default("ACTIVE") // ACTIVE, EXPIRED, CANCELLED
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// Content
+model Category {
+  id    String @id @default(cuid())
+  name  String
+  slug  String @unique
+  posts Post[]
+}
+
+model Post {
+  id            String   @id @default(cuid())
+  title         String
+  slug          String   @unique
+  content       String
+  excerpt       String?
+  featuredImage String?
+  published     Boolean  @default(false)
+  authorId      String
+  
+  categoryId    String?
+  category      Category? @relation(fields: [categoryId], references: [id])
+  
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+// Betting & Sports
+model Fixture {
+  id          String   @id @default(cuid())
+  externalId  String?  @unique // API ID
+  homeTeam    String
+  awayTeam    String
+  league      String
+  date        DateTime
+  status      String   // SCHEDULED, LIVE, FT, PST
+  homeScore   Int?
+  awayScore   Int?
+  
+  predictions Prediction[]
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Prediction {
+  id          String   @id @default(cuid())
+  fixtureId   String?
+  fixture     Fixture? @relation(fields: [fixtureId], references: [id])
+  
+  matchTitle  String   // Manual override or fallback
+  date        DateTime
+  league      String?
+  
+  market      String   // e.g. "1X2", "Over 2.5"
+  selection   String   // e.g. "Home Win", "Over"
+  odds        Float
+  confidence  Int      @default(5) // 1-10
+  analysis    String?
+  
+  status      String   @default("PENDING") // PENDING, WON, LOST, VOID
+  isPremium   Boolean  @default(false)
+  resultScore String?  // "2-1"
+  
+  isBanker    Boolean  @default(false) // "Best Tip Code of the Day"
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model LiveMatchCache {
+  id        String   @id @default("cache")
+  data      String   // JSON string of live scores
+  updatedAt DateTime @updatedAt
+}
+
+// Shop
+model Product {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  price       Float
+  imageUrl    String?
+  category    String?
+  stock       Int      @default(0)
+  
+  orderItems  OrderItem[]
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Order {
+  id          String      @id @default(cuid())
+  userId      String?
+  user        User?       @relation(fields: [userId], references: [id])
+  
+  totalAmount Float
+  status      String      @default("PENDING") // PENDING, PAID, SHIPPED, DELIVERED
+  
+  items       OrderItem[]
+  
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+}
+
+model OrderItem {
+  id        String  @id @default(cuid())
+  orderId   String
+  order     Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  productId String
+  product   Product @relation(fields: [productId], references: [id])
+  quantity  Int
+  price     Float
+}
