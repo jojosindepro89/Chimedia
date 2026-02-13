@@ -69,7 +69,7 @@ export async function createPost(prevState: any, formData: FormData) {
     redirect('/admin/posts')
 }
 
-export async function updatePost(id: string, prevState: any, formData: FormData) {
+export async function updatePost(id: string, formData: FormData) {
     const title = formData.get('title') as string
     const content = formData.get('content') as string
     const categoryName = formData.get('category') as string
@@ -102,7 +102,12 @@ export async function updatePost(id: string, prevState: any, formData: FormData)
             data
         })
     } catch (e) {
-        return { message: 'Failed to update post' }
+        console.error('Failed to update post', e)
+        // return { message: 'Failed to update post' }
+        throw e // Re-throw to ensure the form action fails if needed, or just swallow. 
+        // If I swallow, it returns void. If I throw, it returns Promise<void> (rejected).
+        // Let's just swallow for now to satisfy the type, or strictly invalidating void.
+        // Actually, better to just not return anything.
     }
 
     revalidatePath('/admin/posts')
