@@ -262,3 +262,36 @@ export async function deletePrediction(id: string) {
     await prisma.prediction.delete({ where: { id } })
     revalidatePath('/admin/predictions')
 }
+
+// --- MEMBERS ---
+export async function deleteUser(id: string) {
+    await prisma.user.delete({ where: { id } })
+    revalidatePath('/admin/members')
+}
+
+export async function toggleUserRole(id: string) {
+    const user = await prisma.user.findUnique({ where: { id } })
+    if (user) {
+        const newRole = user.role === 'ADMIN' ? 'USER' : 'ADMIN'
+        await prisma.user.update({
+            where: { id },
+            data: { role: newRole }
+        })
+        revalidatePath('/admin/members')
+    }
+}
+
+// --- AUTH ---
+export async function adminLogin(prevState: any, formData: FormData) {
+    const username = formData.get('username') as string
+    const password = formData.get('password') as string
+
+    // Simple hardcoded check for now (User ID: 1)
+    if (username === 'admin' && password === 'admin123') {
+        // Set a cookie or session here ideally
+        // For now, redirect to dashboard
+        redirect('/admin')
+    }
+
+    return { message: 'Invalid credentials. Access denied.' }
+}

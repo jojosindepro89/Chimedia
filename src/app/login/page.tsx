@@ -16,8 +16,8 @@ export default function LoginPage() {
         // Simulate API call
         setTimeout(() => {
             setLoading(false);
-            // Redirect to Admin for demo purposes, or Home
-            router.push("/admin");
+            // Redirect to Dashboard for demo purposes
+            router.push("/dashboard");
         }, 1000);
     };
 
@@ -69,9 +69,6 @@ export default function LoginPage() {
                     <div className="mt-8 text-center text-sm text-gray-500 space-y-4">
                         <div>
                             Don't have an account? <Link href="/register" className="text-white font-bold hover:text-primary transition-colors ml-1 uppercase">Sign Up</Link>
-                        </div>
-                        <div>
-                            <Link href="/admin" className="text-gray-600 hover:text-gray-400 text-xs uppercase tracking-widest transition-colors font-bold">Admin Login</Link>
                         </div>
                     </div>
                 </div>

@@ -2,28 +2,12 @@
 
 import Link from "next/link";
 import { ArrowLeft, Save, Upload } from "lucide-react";
-import { useFormState } from "react-dom";
+import { useActionState } from "react";
 import { updateProduct } from "@/app/actions";
 
-interface ProductEditFormProps {
-    product: {
-        id: string;
-        name: string;
-        description: string | null;
-        price: number;
-        imageUrl: string | null;
-        category: string | null;
-        stock: number;
-    }
-}
-
-const initialState = {
-    message: '',
-}
-
-export default function ProductEditForm({ product }: ProductEditFormProps) {
+export default function ProductEditForm({ product }: { product: any }) {
     const updateProductWithId = updateProduct.bind(null, product.id);
-    const [state, formAction] = useFormState(updateProductWithId, initialState);
+    const [state, formAction] = useActionState(updateProductWithId, { message: '' });
 
     return (
         <div className="max-w-4xl mx-auto">

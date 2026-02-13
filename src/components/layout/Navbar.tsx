@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Menu, X, Search, User, ShoppingBag } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useCart } from "@/components/providers/CartProvider";
 import clsx from "clsx";
 
 const navLinks = [
@@ -22,6 +23,7 @@ export default function Navbar() {
     const [isOpen, setIsOpen] = useState(false);
     const [isScrolled, setIsScrolled] = useState(false);
     const pathname = usePathname();
+    const { cartCount } = useCart();
 
     useEffect(() => {
         const handleScroll = () => {
@@ -72,7 +74,7 @@ export default function Navbar() {
                     </button>
                     <Link href="/cart" className="text-white hover:text-primary transition-colors relative">
                         <ShoppingBag className="w-5 h-5" />
-                        <span className="absolute -top-1 -right-1 bg-primary text-black text-[10px] font-bold w-4 h-4 flex items-center justify-center rounded-full">0</span>
+                        <span className="absolute -top-1 -right-1 bg-primary text-black text-[10px] font-bold w-4 h-4 flex items-center justify-center rounded-full">{cartCount}</span>
                     </Link>
                     <Link
                         href="/login"

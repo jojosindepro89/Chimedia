@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { ArrowLeft, Save, Upload } from "lucide-react";
-import { useFormState } from "react-dom";
+import { useActionState } from "react";
 import { createProduct } from "@/app/actions";
 
 const initialState = {
@@ -10,7 +10,7 @@ const initialState = {
 }
 
 export default function NewProductPage() {
-    const [state, formAction] = useFormState(createProduct, initialState);
+    const [state, formAction] = useActionState(createProduct, initialState);
 
     return (
         <div className="max-w-4xl mx-auto">

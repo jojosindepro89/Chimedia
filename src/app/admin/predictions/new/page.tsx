@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { ArrowLeft, Save } from "lucide-react";
-import { useFormState } from "react-dom";
+import { useActionState } from "react";
 import { createPrediction } from "@/app/actions";
 
 const initialState = {
@@ -10,7 +10,7 @@ const initialState = {
 }
 
 export default function NewPredictionPage() {
-    const [state, formAction] = useFormState(createPrediction, initialState);
+    const [state, formAction] = useActionState(createPrediction, initialState);
 
     return (
         <div className="max-w-4xl mx-auto">
