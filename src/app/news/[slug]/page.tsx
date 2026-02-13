@@ -1,7 +1,8 @@
 import Link from "next/link";
 import { Calendar, User, Share2, ArrowLeft } from "lucide-react";
 
-export default function SingleNewsPage({ params }: { params: { slug: string } }) {
+export default async function SingleNewsPage({ params }: { params: Promise<{ slug: string }> }) {
+    const { slug } = await params;
     // Mock Data (In a real app, fetch based on slug)
     const post = {
         title: "Mbappe scores hat-trick in thrilling Classico",

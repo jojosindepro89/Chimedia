@@ -1,90 +1,17 @@
-import Link from "next/link";
-import { ArrowLeft, Save, Upload } from "lucide-react";
 import { prisma } from "@/lib/prisma";
-import { updateProduct } from "@/app/actions";
 import { redirect } from "next/navigation";
+import ProductEditForm from "@/components/admin/ProductEditForm";
 
-export default async function EditProductPage({ params }: { params: { id: string } }) {
+export default async function EditProductPage({ params }: { params: Promise<{ id: string }> }) {
+    const { id } = await params;
+
     const product = await prisma.product.findUnique({
-        where: { id: params.id },
+        where: { id },
     });
 
     if (!product) {
         redirect("/admin/shop");
     }
 
-    const updateProductWithId = updateProduct.bind(null, product.id);
-
-    return (
-        <div className="max-w-4xl mx-auto">
-            <div className="flex items-center gap-4 mb-8">
-                <Link href="/admin/shop" className="bg-zinc-800 p-2 rounded-full text-white hover:bg-zinc-700 transition-colors">
-                    <ArrowLeft className="w-5 h-5" />
-                </Link>
-                <h1 className="text-3xl font-bold text-white uppercase">Edit Product</h1>
-            </div>
-
-            <form action={updateProductWithId}>
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-
-                    {/* Form Content */}
-                    <div className="lg:col-span-2 bg-zinc-900 border border-white/10 rounded-sm p-8">
-                        <div className="space-y-6">
-                            <div>
-                                <label className="block text-xs uppercase font-bold text-gray-500 mb-2">Product Name</label>
-                                <input name="name" defaultValue={product.name} type="text" className="w-full bg-black/50 border border-white/10 rounded px-4 py-3 text-white focus:outline-none focus:border-primary transition-colors font-bold" required />
-                            </div>
-
-                            <div className="grid grid-cols-2 gap-6">
-                                <div>
-                                    <label className="block text-xs uppercase font-bold text-gray-500 mb-2">Price ($)</label>
-                                    <input name="price" defaultValue={product.price} type="number" step="0.01" className="w-full bg-black/50 border border-white/10 rounded px-4 py-3 text-white focus:outline-none focus:border-primary transition-colors" required />
-                                </div>
-                                <div>
-                                    <label className="block text-xs uppercase font-bold text-gray-500 mb-2">Stock Quantity</label>
-                                    <input name="stock" defaultValue={product.stock} type="number" className="w-full bg-black/50 border border-white/10 rounded px-4 py-3 text-white focus:outline-none focus:border-primary transition-colors" required />
-                                </div>
-                            </div>
-
-                            <div>
-                                <label className="block text-xs uppercase font-bold text-gray-500 mb-2">Category</label>
-                                <select name="category" defaultValue={product.category || 'Apparel'} className="w-full bg-black/50 border border-white/10 rounded px-4 py-3 text-white focus:outline-none focus:border-primary transition-colors appearance-none" required>
-                                    <option value="Apparel">Apparel</option>
-                                    <option value="Accessories">Accessories</option>
-                                    <option value="Equipment">Equipment</option>
-                                    <option value="Memorabilia">Memorabilia</option>
-                                </select>
-                            </div>
-
-                            <div>
-                                <label className="block text-xs uppercase font-bold text-gray-500 mb-2">Description</label>
-                                <textarea name="description" defaultValue={product.description || ''} rows={6} className="w-full bg-black/50 border border-white/10 rounded px-4 py-3 text-white focus:outline-none focus:border-primary transition-colors"></textarea>
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* Sidebar / Image */}
-                    <div className="space-y-6">
-                        <div className="bg-zinc-900 border border-white/10 rounded-sm p-6">
-                            <label className="block text-xs uppercase font-bold text-gray-500 mb-4">Product Image</label>
-
-                            {product.imageUrl && (
-                                <div className="mb-4">
-                                    <img src={product.imageUrl} alt="Current" className="w-full h-auto rounded border border-white/10" />
-                                    <p className="text-xs text-gray-500 text-center mt-2">Current Image</p>
-                                </div>
-                            )}
-
-                            <input type="file" name="image" className="w-full bg-black/50 border border-white/10 rounded px-4 py-3 text-white focus:outline-none focus:border-primary transition-colors" accept="image/*" />
-                        </div>
-
-                        <button type="submit" className="w-full bg-primary text-black font-bold uppercase py-4 rounded hover:bg-yellow-500 transition-colors shadow-lg shadow-primary/20 flex items-center justify-center gap-2">
-                            <Save className="w-5 h-5" /> Update Product
-                        </button>
-                    </div>
-
-                </div>
-            </form>
-        </div>
-    );
+    return <ProductEditForm product={product} />;
 }

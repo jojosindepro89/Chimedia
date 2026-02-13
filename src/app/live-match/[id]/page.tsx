@@ -1,7 +1,8 @@
 import Link from "next/link";
 import { ArrowLeft, Play, BarChart2 } from "lucide-react";
 
-export default function LiveMatchPage({ params }: { params: { id: string } }) {
+export default async function LiveMatchPage({ params }: { params: Promise<{ id: string }> }) {
+    const { id } = await params;
     return (
         <div className="bg-black min-h-screen text-white pb-20">
             {/* Header Back */}
