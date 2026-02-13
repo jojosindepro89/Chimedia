@@ -1,5 +1,4 @@
 import React from 'react';
-import { Card, CardContent } from "@/components/ui/card";
 
 export const metadata = {
     title: 'Terms of Service | ChiMedia',
@@ -12,8 +11,8 @@ export default function TermsPage() {
             <div className="max-w-4xl mx-auto">
                 <h1 className="text-3xl font-bold mb-8 text-white">Terms of Service</h1>
 
-                <Card className="bg-zinc-900 border-zinc-800 text-gray-300">
-                    <CardContent className="p-8 space-y-6">
+                <div className="bg-zinc-900 border border-zinc-800 rounded-lg text-gray-300">
+                    <div className="p-8 space-y-6">
                         <section>
                             <h2 className="text-xl font-semibold text-white mb-3">1. Acceptance of Terms</h2>
                             <p>
@@ -92,8 +91,8 @@ export default function TermsPage() {
                                 <a href="mailto:support@chimedia.com" className="text-primary hover:underline">support@chimedia.com</a>
                             </p>
                         </section>
-                    </CardContent>
-                </Card>
+                    </div>
+                </div>
             </div>
         </div>
     );
