@@ -1,5 +1,7 @@
 import Link from "next/link";
 import { ArrowRight, Trophy, TrendingUp, Calendar, Shield } from "lucide-react";
+import NewsFeed from "@/components/NewsFeed";
+import UpcomingFixtures from "@/components/UpcomingFixtures";
 
 export default function Home() {
   return (
@@ -53,59 +55,15 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Feature Blocks */}
-      <section className="py-20 bg-black">
-        <div className="container mx-auto px-4">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <FeatureCard
-              icon={<TrendingUp className="w-8 h-8 text-primary" />}
-              title="Match Reports"
-              description="In-depth analysis and highlights from the top 5 European leagues."
-              link="/news"
-              linkText="Read Reports"
-            />
-            <FeatureCard
-              icon={<Shield className="w-8 h-8 text-primary" />}
-              title="Transfer Updates"
-              description="Real-time verified transfer news and contract rumors."
-              link="/transfers"
-              linkText="See Transfers"
-            />
-            <FeatureCard
-              icon={<Trophy className="w-8 h-8 text-primary" />}
-              title="Expert Predictions"
-              description="Daily betting tips with high strike rates. Join our premium club."
-              link="/predictions"
-              linkText="View Tips"
-              isPremium
-            />
-          </div>
-        </div>
-      </section>
-
-      {/* Spotlight Section - Featured Post */}
+      {/* News Feed - Fetched Dynamically */}
       <section className="py-16 bg-zinc-900">
         <div className="container mx-auto px-4">
-          <div className="flex flex-col md:flex-row items-center gap-12">
-            <div className="w-full md:w-1/2 rounded-lg overflow-hidden shadow-2xl border border-white/10">
-              {/* Placeholder for featured image */}
-              <div className="bg-zinc-800 h-64 md:h-96 w-full flex items-center justify-center">
-                <span className="text-gray-500">Featured Image Placeholder</span>
-              </div>
-            </div>
-            <div className="w-full md:w-1/2 space-y-6">
-              <span className="text-primary font-bold tracking-widest uppercase text-sm">Spotlight</span>
-              <h2 className="text-4xl font-bold text-white leading-tight">
-                Premier League Title Race: The Final stretch analysis
-              </h2>
-              <p className="text-gray-400 text-lg">
-                As we approach the final 10 games of the season, data analytics suggests a dramatic turn of events. Here is our deep dive into the remaining fixtures.
-              </p>
-              <Link href="/news/slug" className="inline-flex items-center text-primary font-bold uppercase tracking-wide hover:text-white transition-colors">
-                Read Full Story <ArrowRight className="ml-2 w-4 h-4" />
-              </Link>
-            </div>
+          <div className="flex items-center justify-between mb-12">
+            <h2 className="text-3xl font-bold text-white uppercase tracking-tighter">Latest <span className="text-primary">Headlines</span></h2>
+            <Link href="/news" className="text-primary font-bold uppercase text-sm hover:text-white transition-colors">View All News</Link>
           </div>
+
+          <NewsFeed />
         </div>
       </section>
 
@@ -113,29 +71,7 @@ export default function Home() {
       <section className="py-20 bg-black border-t border-white/5">
         <div className="container mx-auto px-4 text-center">
           <h2 className="text-3xl font-bold text-white mb-12 uppercase tracking-tighter">Upcoming <span className="text-primary">Matches</span></h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <FixtureCard
-              league="Premier League"
-              home="Arsenal"
-              away="Chelsea"
-              time="17:30 GMT"
-              date="Today"
-            />
-            <FixtureCard
-              league="La Liga"
-              home="Real Madrid"
-              away="Barcelona"
-              time="20:00 GMT"
-              date="Tomorrow"
-            />
-            <FixtureCard
-              league="Serie A"
-              home="Juventus"
-              away="AC Milan"
-              time="19:45 GMT"
-              date="Sunday"
-            />
-          </div>
+          <UpcomingFixtures />
           <div className="mt-12">
             <Link href="/live-scores" className="px-8 py-3 bg-zinc-800 text-white hover:bg-white hover:text-black font-bold uppercase rounded-sm transition-colors cursor-pointer">
               View All Fixtures

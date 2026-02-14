@@ -17,9 +17,9 @@ export default function Footer() {
                         </p>
                         <div className="flex space-x-4">
                             <SocialLink href="#" icon={<Twitter className="w-5 h-5" />} />
-                            <SocialLink href="#" icon={<Facebook className="w-5 h-5" />} />
+                            <SocialLink href="https://www.facebook.com/share/1CEcTbwBCj/?mibextid=wwXIfr" icon={<Facebook className="w-5 h-5" />} />
                             <SocialLink href="#" icon={<Instagram className="w-5 h-5" />} />
-                            <SocialLink href="#" icon={<Youtube className="w-5 h-5" />} />
+                            <SocialLink href="https://www.youtube.com/@chigoziemediahousesports" icon={<Youtube className="w-5 h-5" />} />
                         </div>
                     </div>
 

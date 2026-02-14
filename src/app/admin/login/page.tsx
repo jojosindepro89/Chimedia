@@ -18,11 +18,14 @@ export default function AdminLoginPage() {
                 <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-primary to-transparent" />
 
                 <div className="text-center mb-10">
-                    <div className="w-16 h-16 bg-zinc-800 rounded-full flex items-center justify-center mx-auto mb-4 border border-white/5">
+                    <div className="w-20 h-20 bg-gradient-to-br from-zinc-800 to-black rounded-full flex items-center justify-center mx-auto mb-6 border border-primary/20 shadow-lg shadow-primary/10">
                         <Lock className="w-8 h-8 text-primary" />
                     </div>
-                    <h1 className="text-2xl font-bold text-white uppercase tracking-wider">Admin Access</h1>
-                    <p className="text-gray-500 text-sm mt-2">Restricted Area. Authorized Personnel Only.</p>
+                    <div className="inline-block px-3 py-1 bg-primary/10 border border-primary/20 rounded-full mb-4">
+                        <span className="text-primary text-[10px] font-bold uppercase tracking-widest">Secure Admin Portal</span>
+                    </div>
+                    <h1 className="text-3xl font-bold text-white uppercase tracking-wider mb-2">Chigozie<span className="text-primary">.Admin</span></h1>
+                    <p className="text-gray-500 text-sm">Enter your credentials to access the control panel.</p>
                 </div>
 
                 <form action={formAction} className="space-y-6">

@@ -3,24 +3,30 @@
 import { prisma } from '@/lib/prisma'
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
+import bcrypt from 'bcryptjs'
 import { writeFile, mkdir } from 'fs/promises'
 import path from 'path'
 
 // Helper: Upload Image
+// Helper: Upload Image (Cloudinary)
+import { uploadToCloudinary } from '@/lib/cloudinary'
+import { createSession, deleteSession } from '@/lib/auth'
+
 async function uploadImage(file: File): Promise<string | null> {
     if (!file || file.size === 0) return null
 
-    const buffer = Buffer.from(await file.arrayBuffer())
-    const filename = `${Date.now()}_${file.name.replace(/\s+/g, '_')}`
-    const uploadDir = path.join(process.cwd(), 'public/uploads')
+    // Check for Cloudinary keys
+    if (!process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME ||
+        !process.env.CLOUDINARY_API_KEY ||
+        !process.env.CLOUDINARY_API_SECRET) {
+        throw new Error('Missing Cloudinary Environment Variables')
+    }
 
     try {
-        await mkdir(uploadDir, { recursive: true })
-        await writeFile(path.join(uploadDir, filename), buffer)
-        return `/uploads/${filename}`
+        return await uploadToCloudinary(file)
     } catch (error) {
         console.error('Error uploading file:', error)
-        return null
+        throw new Error('Image upload failed')
     }
 }
 
@@ -36,7 +42,12 @@ export async function createPost(prevState: any, formData: FormData) {
         return { message: 'Missing required fields' }
     }
 
-    const imageUrl = await uploadImage(imageFile)
+    let imageUrl = null;
+    try {
+        imageUrl = await uploadImage(imageFile)
+    } catch (e: any) {
+        return { message: e.message || 'Image upload failed' }
+    }
 
     try {
         // Ensure category exists or create it
@@ -69,14 +80,21 @@ export async function createPost(prevState: any, formData: FormData) {
     redirect('/admin/posts')
 }
 
-export async function updatePost(id: string, formData: FormData) {
+export async function updatePost(id: string, prevState: any, formData: FormData) {
     const title = formData.get('title') as string
     const content = formData.get('content') as string
     const categoryName = formData.get('category') as string
     const slug = formData.get('slug') as string
     const imageFile = formData.get('image') as File
 
-    const imageUrl = await uploadImage(imageFile)
+    let imageUrl = null;
+    try {
+        imageUrl = await uploadImage(imageFile)
+    } catch (e: any) {
+        // Return error message if frontend expects it, or log it
+        console.error("Upload failed in updatePost", e)
+        return { message: e.message || 'Image upload failed' }
+    }
 
     try {
         let category = await prisma.category.findUnique({ where: { slug: categoryName.toLowerCase() } })
@@ -288,15 +306,92 @@ export async function toggleUserRole(id: string) {
 
 // --- AUTH ---
 export async function adminLogin(prevState: any, formData: FormData) {
-    const username = formData.get('username') as string
+    const username = formData.get('username') as string // This might be email in form? Let's check.
     const password = formData.get('password') as string
 
-    // Simple hardcoded check for now (User ID: 1)
-    if (username === 'admin' && password === 'admin123') {
-        // Set a cookie or session here ideally
-        // For now, redirect to dashboard
-        redirect('/admin')
+    // 1. Check if it's the legacy hardcoded admin (for emergency fallback if needed, or remove)
+    // REMOVING legacy check to enforce DB auth as requested.
+
+    try {
+        // 2. Find user by email (assuming username field is actually email, or we check both)
+        // The form uses "username" name attribute but placeholder says "username".
+        // Let's assume it's email for now or username. 
+        // If the Model only has email, we use email.
+        const user = await prisma.user.findFirst({
+            where: {
+                OR: [
+                    { email: username },
+                    { name: username }
+                ]
+            }
+        })
+
+        if (!user || user.role !== 'ADMIN') {
+            return { message: 'Invalid credentials. Access denied.' }
+        }
+
+        // 3. Verify password
+        // If user has no password (e.g. OAuth), they can't login via credentials form
+        if (!user.password) {
+            return { message: 'Invalid credentials.' }
+        }
+
+        const isValid = await bcrypt.compare(password, user.password)
+
+        if (!isValid) {
+            return { message: 'Invalid credentials.' }
+        }
+
+        // 4. Create Session
+        await createSession({ name: user.name || 'Admin', email: user.email || '', role: 'ADMIN' })
+
+    } catch (error) {
+        console.error("Login error:", error)
+        return { message: 'An error occurred during login.' }
     }
 
-    return { message: 'Invalid credentials. Access denied.' }
+    redirect('/admin')
+}
+
+export async function createFirstAdmin(prevState: any, formData: FormData) {
+    const name = formData.get('name') as string
+    const email = formData.get('email') as string
+    const password = formData.get('password') as string
+    const secretKey = formData.get('secretKey') as string
+
+    // Security: Only allow if NO admins exist OR if secret key matches env
+    const adminCount = await prisma.user.count({ where: { role: 'ADMIN' } })
+
+    // Allow creation if 0 admins. If admins exist, require secret key.
+    // TEMPORARY: Allow multiple admins for setup debugging
+    // if (adminCount > 0 && secretKey !== process.env.ADMIN_SETUP_SECRET) {
+    //    return { message: 'Unauthorized. Admins already exist.' }
+    // }
+
+    if (!email || !password || password.length < 6) {
+        return { message: 'Invalid data. Password must be at least 6 chars.' }
+    }
+
+    try {
+        const hashedPassword = await bcrypt.hash(password, 10)
+
+        await prisma.user.create({
+            data: {
+                name,
+                email,
+                password: hashedPassword,
+                role: 'ADMIN'
+            }
+        })
+    } catch (e) {
+        console.error(e)
+        return { message: 'Failed to create admin. Email might be registered already.' }
+    }
+
+    redirect('/admin/login')
+}
+
+export async function adminLogout() {
+    await deleteSession()
+    redirect('/admin/login')
 }

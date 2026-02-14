@@ -15,6 +15,7 @@ const navLinks = [
     { name: "Transfers", href: "/transfers" },
     { name: "Predictions", href: "/predictions" },
     { name: "Live Scores", href: "/live-scores" },
+    { name: "Watch Live", href: "/live" },
     { name: "Shop", href: "/shop" },
     { name: "Membership", href: "/membership" },
 ];

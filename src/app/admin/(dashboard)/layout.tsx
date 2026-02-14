@@ -1,7 +1,12 @@
 import Link from "next/link";
 import { LayoutDashboard, FileText, Trophy, Users, ShoppingBag, Settings, LogOut } from "lucide-react";
 
-export default function AdminLayout({ children }: { children: React.ReactNode }) {
+import { verifyAdminSession } from "@/lib/auth";
+import { adminLogout } from "@/app/actions";
+
+export default async function AdminLayout({ children }: { children: React.ReactNode }) {
+    const session = await verifyAdminSession();
+    const user = session?.user;
     return (
         <div className="flex h-screen bg-black text-white">
             {/* Sidebar */}
@@ -11,6 +16,15 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                         <span className="text-white">Chigozie</span>
                         <span className="text-primary ml-1">Admin</span>
                     </Link>
+                    <div className="mt-4 flex items-center gap-3">
+                        <div className="w-10 h-10 bg-zinc-800 rounded-full flex items-center justify-center font-bold text-gray-500 border border-white/10">
+                            {user?.name?.charAt(0) || 'A'}
+                        </div>
+                        <div>
+                            <div className="text-white font-bold text-sm">{user?.name || 'Admin'}</div>
+                            <div className="text-gray-500 text-xs">{user?.email || 'admin@chigozie.com'}</div>
+                        </div>
+                    </div>
                 </div>
 
                 <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
@@ -25,10 +39,12 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                 </nav>
 
                 <div className="p-4 border-t border-white/10">
-                    <button className="flex items-center gap-3 text-red-500 hover:text-red-400 transition-colors w-full px-4 py-2 opacity-80 hover:opacity-100">
-                        <LogOut size={20} />
-                        <span className="font-bold uppercase text-sm">Logout</span>
-                    </button>
+                    <form action={adminLogout}>
+                        <button className="flex items-center gap-3 text-red-500 hover:text-red-400 transition-colors w-full px-4 py-2 opacity-80 hover:opacity-100">
+                            <LogOut size={20} />
+                            <span className="font-bold uppercase text-sm">Logout</span>
+                        </button>
+                    </form>
                 </div>
             </aside>
 

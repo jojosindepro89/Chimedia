@@ -1,8 +1,16 @@
 import Link from "next/link";
-import { ArrowLeft, Play, BarChart2 } from "lucide-react";
+import { ArrowLeft, BarChart2 } from "lucide-react";
+import { getMatchDetails } from "@/lib/football-api";
+import { notFound } from "next/navigation";
+
+export const revalidate = 60;
 
 export default async function LiveMatchPage({ params }: { params: Promise<{ id: string }> }) {
     const { id } = await params;
+    const match = await getMatchDetails(id);
+
+    if (!match) return notFound();
+
     return (
         <div className="bg-black min-h-screen text-white pb-20">
             {/* Header Back */}
@@ -19,20 +27,30 @@ export default async function LiveMatchPage({ params }: { params: Promise<{ id: 
                 <div className="container mx-auto px-4">
                     <div className="flex flex-col md:flex-row items-center justify-center gap-8 md:gap-16">
                         <div className="text-center">
-                            <div className="w-20 h-20 bg-zinc-800 rounded-full mx-auto mb-4 border-2 border-transparent hover:border-primary transition-colors"></div>
-                            <h2 className="text-2xl font-bold uppercase">Man City</h2>
+                            <div className="w-20 h-20 bg-zinc-800 rounded-full mx-auto mb-4 border-2 border-transparent hover:border-primary transition-colors flex items-center justify-center p-2">
+                                <img src={match.home.logo} alt={match.home.name} className="w-full h-full object-contain" />
+                            </div>
+                            <h2 className="text-2xl font-bold uppercase">{match.home.name}</h2>
                         </div>
 
                         <div className="text-center">
-                            <div className="text-4xl font-bold font-mono bg-zinc-900 px-6 py-3 rounded border border-white/10 mb-2">2 - 1</div>
-                            <span className="text-red-500 font-bold uppercase animate-pulse flex items-center justify-center gap-2">
-                                <span className="w-2 h-2 rounded-full bg-red-500"></span> Live . 78'
+                            <div className="text-4xl font-bold font-mono bg-zinc-900 px-6 py-3 rounded border border-white/10 mb-2">
+                                {match.status.short === "NS" ? "VS" : `${match.goals.home} - ${match.goals.away}`}
+                            </div>
+                            <span className={clsx(
+                                "font-bold uppercase flex items-center justify-center gap-2",
+                                match.status.short === "LIVE" ? "text-red-500 animate-pulse" : "text-gray-500"
+                            )}>
+                                {match.status.short === "LIVE" && <span className="w-2 h-2 rounded-full bg-red-500"></span>}
+                                {match.status.long} {match.status.elapsed && `. ${match.status.elapsed}'`}
                             </span>
                         </div>
 
                         <div className="text-center">
-                            <div className="w-20 h-20 bg-zinc-800 rounded-full mx-auto mb-4 border-2 border-transparent hover:border-primary transition-colors"></div>
-                            <h2 className="text-2xl font-bold uppercase">Liverpool</h2>
+                            <div className="w-20 h-20 bg-zinc-800 rounded-full mx-auto mb-4 border-2 border-transparent hover:border-primary transition-colors flex items-center justify-center p-2">
+                                <img src={match.away.logo} alt={match.away.name} className="w-full h-full object-contain" />
+                            </div>
+                            <h2 className="text-2xl font-bold uppercase">{match.away.name}</h2>
                         </div>
                     </div>
                 </div>
@@ -61,16 +79,8 @@ export default async function LiveMatchPage({ params }: { params: Promise<{ id: 
                         <h3 className="text-xl font-bold text-white mb-6 uppercase border-l-4 border-primary pl-4">Match Events</h3>
                         <div className="space-y-4">
                             <div className="flex gap-4">
-                                <span className="text-primary font-bold w-8">75'</span>
-                                <p className="text-gray-300">Goal! De Bruyne scores a screamer.</p>
-                            </div>
-                            <div className="flex gap-4">
-                                <span className="text-primary font-bold w-8">42'</span>
-                                <p className="text-gray-300">Yellow Card. Rodri brings down Salah.</p>
-                            </div>
-                            <div className="flex gap-4">
-                                <span className="text-primary font-bold w-8">12'</span>
-                                <p className="text-gray-300">Goal! Haaland opens the scoring.</p>
+                                <span className="text-primary font-bold w-8">--</span>
+                                <p className="text-gray-300">Events data coming soon...</p>
                             </div>
                         </div>
                     </div>
@@ -84,20 +94,17 @@ export default async function LiveMatchPage({ params }: { params: Promise<{ id: 
                             <BarChart2 className="w-5 h-5 text-primary" /> Match Stats
                         </h3>
                         <div className="space-y-4">
-                            <StatRow label="Possession" left="60%" right="40%" />
-                            <StatRow label="Shots" left="12" right="8" />
-                            <StatRow label="On Target" left="5" right="3" />
-                            <StatRow label="Corners" left="6" right="2" />
+                            <p className="text-gray-500 text-sm text-center">Stats available after kickoff</p>
                         </div>
                     </div>
 
                     {/* Predictions CTA */}
                     <div className="bg-gradient-to-br from-primary to-yellow-600 p-6 rounded text-black text-center">
                         <h3 className="text-2xl font-bold uppercase mb-2">Live Prediction</h3>
-                        <p className="text-sm font-medium mb-4">Our AI predicts a late goal.</p>
+                        <p className="text-sm font-medium mb-4">Our AI predicts a result.</p>
                         <div className="bg-black/10 p-4 rounded mb-4">
                             <span className="block text-xs uppercase font-bold mb-1">Tip</span>
-                            <span className="text-xl font-bold">Over 3.5 Goals</span>
+                            <span className="text-xl font-bold">Premium Only</span>
                         </div>
                         <button className="w-full bg-black text-primary font-bold uppercase py-3 rounded hover:bg-zinc-800 transition-colors">
                             Bet Now
@@ -108,6 +115,8 @@ export default async function LiveMatchPage({ params }: { params: Promise<{ id: 
         </div>
     );
 }
+
+import clsx from "clsx";
 
 function StatRow({ label, left, right }: { label: string, left: string, right: string }) {
     return (
