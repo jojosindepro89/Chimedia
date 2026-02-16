@@ -8,17 +8,14 @@ export default function Footer() {
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
                     {/* Brand */}
                     <div className="col-span-1 md:col-span-1">
-                        <Link href="/" className="text-2xl font-bold tracking-tighter uppercase mb-6 block">
-                            <span className="text-white">Chigozie</span>
-                            <span className="text-primary ml-1">Media</span>
+                        <Link href="/" className="block mb-6">
+                            <img src="/logo.svg" alt="Chigozie Media House" className="h-16 w-auto object-contain" />
                         </Link>
                         <p className="text-gray-400 text-sm mb-6">
                             Your ultimate destination for premium football news, transfer updates, and expert betting predictions.
                         </p>
                         <div className="flex space-x-4">
-                            <SocialLink href="#" icon={<Twitter className="w-5 h-5" />} />
                             <SocialLink href="https://www.facebook.com/share/1CEcTbwBCj/?mibextid=wwXIfr" icon={<Facebook className="w-5 h-5" />} />
-                            <SocialLink href="#" icon={<Instagram className="w-5 h-5" />} />
                             <SocialLink href="https://www.youtube.com/@chigoziemediahousesports" icon={<Youtube className="w-5 h-5" />} />
                         </div>
                     </div>
@@ -28,8 +25,6 @@ export default function Footer() {
                         <h3 className="text-primary font-bold uppercase tracking-wider mb-6">Quick Links</h3>
                         <ul className="space-y-3">
                             <FooterLink href="/news" label="News" />
-                            <FooterLink href="/leagues" label="Leagues" />
-                            <FooterLink href="/transfers" label="Transfers" />
                             <FooterLink href="/live-scores" label="Live Scores" />
                         </ul>
                     </div>

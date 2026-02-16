@@ -22,7 +22,7 @@ export default async function SingleProductPage({ params }: { params: Promise<{ 
     }
 
     return (
-        <div className="bg-black min-h-screen text-white pb-20 pt-10">
+        <div className="bg-black min-h-screen text-white pb-20 pt-10 animate-fade-in-up">
             <div className="container mx-auto px-4">
                 <Link href="/shop" className="inline-flex items-center text-gray-400 hover:text-white transition-colors mb-8 uppercase font-bold text-sm">
                     <ArrowLeft className="w-4 h-4 mr-2" /> Back to Shop
@@ -52,7 +52,7 @@ export default async function SingleProductPage({ params }: { params: Promise<{ 
                             <span className="text-gray-400 text-sm">(5.0 based on 0 reviews)</span>
                         </div>
 
-                        <div className="text-3xl font-bold text-white mb-6">${product.price.toFixed(2)}</div>
+                        <div className="text-3xl font-bold text-white mb-6">₦{product.price.toLocaleString()}</div>
 
                         <div className="prose prose-invert text-gray-300 mb-8 border-b border-white/10 pb-8">
                             <p>{product.description || "No description available."}</p>

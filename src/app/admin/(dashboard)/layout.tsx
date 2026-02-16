@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { LayoutDashboard, FileText, Trophy, Users, ShoppingBag, Settings, LogOut } from "lucide-react";
 
-import { verifyAdminSession } from "@/lib/auth";
+import { verifyAdminSession } from "@/lib/session";
 import { adminLogout } from "@/app/actions";
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {

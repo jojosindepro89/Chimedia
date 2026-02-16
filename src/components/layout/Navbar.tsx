@@ -11,8 +11,6 @@ import clsx from "clsx";
 const navLinks = [
     { name: "Home", href: "/" },
     { name: "News", href: "/news" },
-    { name: "Leagues", href: "/leagues" },
-    { name: "Transfers", href: "/transfers" },
     { name: "Predictions", href: "/predictions" },
     { name: "Live Scores", href: "/live-scores" },
     { name: "Watch Live", href: "/live" },
@@ -47,9 +45,8 @@ export default function Navbar() {
         >
             <div className="container mx-auto px-4 flex items-center justify-between">
                 {/* Logo */}
-                <Link href="/" className="text-2xl font-bold tracking-tighter uppercase">
-                    <span className="text-white">Chigozie</span>
-                    <span className="text-primary ml-1">Media</span>
+                <Link href="/" className="block">
+                    <img src="/logo.svg" alt="Chigozie Media House" className="h-20 w-auto object-contain" />
                 </Link>
 
                 {/* Desktop Nav */}

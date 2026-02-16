@@ -10,7 +10,7 @@ import path from 'path'
 // Helper: Upload Image
 // Helper: Upload Image (Cloudinary)
 import { uploadToCloudinary } from '@/lib/cloudinary'
-import { createSession, deleteSession } from '@/lib/auth'
+import { createSession, deleteSession, verifyAdminSession } from '@/lib/session'
 
 async function uploadImage(file: File): Promise<string | null> {
     if (!file || file.size === 0) return null
@@ -32,6 +32,7 @@ async function uploadImage(file: File): Promise<string | null> {
 
 // --- POSTS ---
 export async function createPost(prevState: any, formData: FormData) {
+    await verifyAdminSession()
     const title = formData.get('title') as string
     const content = formData.get('content') as string
     const categoryName = formData.get('category') as string
@@ -81,6 +82,7 @@ export async function createPost(prevState: any, formData: FormData) {
 }
 
 export async function updatePost(id: string, prevState: any, formData: FormData) {
+    await verifyAdminSession()
     const title = formData.get('title') as string
     const content = formData.get('content') as string
     const categoryName = formData.get('category') as string
@@ -134,12 +136,14 @@ export async function updatePost(id: string, prevState: any, formData: FormData)
 }
 
 export async function deletePost(id: string) {
+    await verifyAdminSession()
     await prisma.post.delete({ where: { id } })
     revalidatePath('/admin/posts')
 }
 
 // --- PRODUCTS ---
 export async function createProduct(prevState: any, formData: FormData) {
+    await verifyAdminSession()
     const name = formData.get('name') as string
     const price = parseFloat(formData.get('price') as string)
     const stock = parseInt(formData.get('stock') as string)
@@ -170,6 +174,7 @@ export async function createProduct(prevState: any, formData: FormData) {
 }
 
 export async function updateProduct(id: string, prevState: any, formData: FormData) {
+    await verifyAdminSession()
     const name = formData.get('name') as string
     const price = parseFloat(formData.get('price') as string)
     const stock = parseInt(formData.get('stock') as string)
@@ -205,6 +210,7 @@ export async function updateProduct(id: string, prevState: any, formData: FormDa
 }
 
 export async function deleteProduct(id: string) {
+    await verifyAdminSession()
     await prisma.product.delete({ where: { id } })
     revalidatePath('/admin/shop')
 }
@@ -212,6 +218,7 @@ export async function deleteProduct(id: string) {
 
 // --- PREDICTIONS ---
 export async function createPrediction(prevState: any, formData: FormData) {
+    await verifyAdminSession()
     const homeTeam = formData.get('homeTeam') as string
     const awayTeam = formData.get('awayTeam') as string
     const market = formData.get('market') as string
@@ -221,23 +228,28 @@ export async function createPrediction(prevState: any, formData: FormData) {
     const type = formData.get('type') as string // free, premium, banker
     const dateStr = formData.get('date') as string
 
+    if (!homeTeam || !awayTeam || !market || !dateStr) {
+        return { message: 'Missing required fields' }
+    }
+
     try {
         await prisma.prediction.create({
             data: {
                 matchTitle: `${homeTeam} vs ${awayTeam}`,
                 date: new Date(dateStr),
                 market,
-                selection: 'TBD', // simplified
+                selection: 'TBD', // This could be significantly improved by adding a specific field for selection in the form
                 odds,
                 confidence,
                 analysis,
-                isPremium: type === 'premium',
+                isPremium: type === 'premium' || type === 'banker', // Bankers are usually premium too
                 isBanker: type === 'banker',
                 status: 'PENDING'
             }
         })
     } catch (e) {
-        return { message: 'Failed to create prediction' }
+        console.error("Failed to create prediction:", e)
+        return { message: 'Failed to create prediction. Please try again.' }
     }
 
     revalidatePath('/admin/predictions')
@@ -246,6 +258,7 @@ export async function createPrediction(prevState: any, formData: FormData) {
 }
 
 export async function updatePrediction(id: string, prevState: any, formData: FormData) {
+    await verifyAdminSession()
     const homeTeam = formData.get('homeTeam') as string
     const awayTeam = formData.get('awayTeam') as string
     const market = formData.get('market') as string
@@ -282,17 +295,20 @@ export async function updatePrediction(id: string, prevState: any, formData: For
 }
 
 export async function deletePrediction(id: string) {
+    await verifyAdminSession()
     await prisma.prediction.delete({ where: { id } })
     revalidatePath('/admin/predictions')
 }
 
 // --- MEMBERS ---
 export async function deleteUser(id: string) {
+    await verifyAdminSession()
     await prisma.user.delete({ where: { id } })
     revalidatePath('/admin/members')
 }
 
 export async function toggleUserRole(id: string) {
+    await verifyAdminSession()
     const user = await prisma.user.findUnique({ where: { id } })
     if (user) {
         const newRole = user.role === 'ADMIN' ? 'USER' : 'ADMIN'

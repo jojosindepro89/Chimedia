@@ -4,7 +4,7 @@ import { Mail, MapPin, Phone, Send } from "lucide-react";
 
 export default function ContactPage() {
     return (
-        <div className="bg-black min-h-screen pb-20">
+        <div className="bg-black min-h-screen pb-20 animate-fade-in-up">
             <div className="bg-zinc-900 border-b border-white/10 py-16">
                 <div className="container mx-auto px-4 text-center">
                     <h1 className="text-5xl font-bold uppercase tracking-tighter text-white mb-4">Contact <span className="text-primary">Us</span></h1>

@@ -55,7 +55,7 @@ export default function ProductCard({ product }: { product: Product }) {
                 <div className="flex justify-center items-center gap-1 mb-4">
                     {[1, 2, 3, 4, 5].map(s => <Star key={s} className="w-3 h-3 text-primary fill-primary" />)}
                 </div>
-                <p className="text-2xl font-bold text-white mb-6 mt-auto">${product.price.toFixed(2)}</p>
+                <p className="text-2xl font-bold text-white mb-6 mt-auto">₦{product.price.toLocaleString()}</p>
 
                 <button
                     onClick={handleAddToCart}

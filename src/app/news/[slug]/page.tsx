@@ -12,6 +12,16 @@ export default async function SingleNewsPage({ params }: { params: Promise<{ slu
         include: { category: true }
     });
 
+    const relatedPosts = post ? await prisma.post.findMany({
+        where: {
+            categoryId: post.categoryId,
+            NOT: { id: post.id },
+            published: true
+        },
+        take: 3,
+        orderBy: { createdAt: 'desc' }
+    }) : [];
+
     if (!post) {
         return (
             <div className="min-h-screen bg-black text-white flex flex-col items-center justify-center">
@@ -22,7 +32,7 @@ export default async function SingleNewsPage({ params }: { params: Promise<{ slu
     }
 
     return (
-        <div className="bg-black min-h-screen pb-20">
+        <div className="bg-black min-h-screen pb-20 animate-fade-in-up">
             {/* Hero / Header */}
             <div className="relative h-[60vh] w-full">
                 <div
@@ -70,10 +80,25 @@ export default async function SingleNewsPage({ params }: { params: Promise<{ slu
                 <div className="lg:col-span-4 space-y-8">
                     {/* Related Posts (Placeholder logic for now) */}
                     <div className="bg-zinc-900 border border-white/5 p-6 rounded-sm">
-                        <h3 className="text-xl font-bold text-white mb-6 uppercase border-l-4 border-primary pl-4">Latest News</h3>
+                        <h3 className="text-xl font-bold text-white mb-6 uppercase border-l-4 border-primary pl-4">Related News</h3>
                         <div className="space-y-6">
-                            {/* In a real app, query related posts here. For now, static placeholder or empty. */}
-                            <p className="text-gray-500 text-sm">More news coming soon.</p>
+                            {relatedPosts.length > 0 ? (
+                                relatedPosts.map(related => (
+                                    <Link key={related.id} href={`/news/${related.slug}`} className="block group">
+                                        <div className="flex gap-4">
+                                            <div className="w-20 h-16 bg-zinc-800 rounded-sm overflow-hidden flex-shrink-0">
+                                                <img src={related.featuredImage || "/placeholder.jpg"} alt={related.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform" />
+                                            </div>
+                                            <div>
+                                                <h4 className="text-white font-bold text-sm leading-tight group-hover:text-primary transition-colors line-clamp-2">{related.title}</h4>
+                                                <span className="text-gray-500 text-xs mt-1 block">{new Date(related.createdAt).toLocaleDateString()}</span>
+                                            </div>
+                                        </div>
+                                    </Link>
+                                ))
+                            ) : (
+                                <p className="text-gray-500 text-sm">No related news available.</p>
+                            )}
                         </div>
                     </div>
 

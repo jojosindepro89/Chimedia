@@ -2,57 +2,71 @@ import Link from "next/link";
 import { ArrowRight, Trophy, TrendingUp, Calendar, Shield } from "lucide-react";
 import NewsFeed from "@/components/NewsFeed";
 import UpcomingFixtures from "@/components/UpcomingFixtures";
+import BreakingNewsTicker from "@/components/BreakingNewsTicker";
+import { prisma } from "@/lib/prisma";
 
-export default function Home() {
+export default async function Home() {
+  const latestNews = await prisma.post.findMany({
+    where: { published: true },
+    orderBy: { createdAt: 'desc' },
+    take: 5,
+    select: { id: true, title: true }
+  });
+
   return (
     <div className="flex flex-col min-h-screen bg-black">
       {/* Hero Section */}
-      <section className="relative h-[85vh] w-full flex items-center justify-center overflow-hidden">
-        {/* Background Image / Gradient */}
-        <div
-          className="absolute inset-0 bg-cover bg-center z-0"
-          style={{ backgroundImage: "url('https://images.unsplash.com/photo-1522778119026-d647f0565c6a?q=80&w=2070&auto=format&fit=crop')" }}
-        >
-          <div className="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-transparent" />
+      <section className="relative h-screen w-full flex items-center justify-center overflow-hidden bg-zinc-900">
+        {/* Background Pattern */}
+        <div className="absolute inset-0 z-0 opacity-20"
+          style={{
+            backgroundImage: `radial-gradient(#EAB308 1px, transparent 1px)`,
+            backgroundSize: '30px 30px'
+          }}>
         </div>
 
+        {/* Background Image Overlay */}
+        <div
+          className="absolute inset-0 bg-cover bg-center z-0 animate-pulse-slow opacity-40 mix-blend-overlay"
+          style={{ backgroundImage: "url('https://images.unsplash.com/photo-1522778119026-d647f0565c6a?q=80&w=2070&auto=format&fit=crop')" }}
+        >
+        </div>
+
+        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent z-0" />
+        <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-transparent to-black/80 z-0" />
+
         {/* Content */}
-        <div className="relative z-10 text-center container mx-auto px-4">
-          <h1 className="text-5xl md:text-7xl font-bold uppercase tracking-tighter text-white mb-6 animate-fade-in-up">
-            <span className="text-primary">Chigozie</span> Media House
+        <div className="relative z-10 text-center container mx-auto px-4 mt-20">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-red-600/20 border border-red-500/50 text-red-500 font-bold uppercase text-xs tracking-widest mb-6 animate-pulse">
+            <span className="w-2 h-2 rounded-full bg-red-500"></span> Live Updates
+          </div>
+
+          <h1 className="text-6xl md:text-8xl font-black uppercase tracking-tighter text-white mb-6 animate-fade-in-up drop-shadow-2xl">
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-yellow-200">Chigozie</span> <br /> Media House
           </h1>
-          <p className="text-xl md:text-2xl text-gray-200 mb-8 max-w-2xl mx-auto font-light">
-            Premium Football News, Verified Transfer Updates & Expert Betting Predictions.
+
+          <p className="text-xl md:text-2xl text-gray-300 mb-10 max-w-3xl mx-auto font-light leading-relaxed">
+            Your premium source for verified football news, expert betting predictions, and exclusive live match coverage.
           </p>
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
             <Link
-              href="/news"
-              className="px-8 py-3 bg-primary text-black font-bold uppercase tracking-wider rounded-sm hover:bg-yellow-500 transition-all transform hover:scale-105"
+              href="/membership"
+              className="px-10 py-4 bg-primary text-black font-black uppercase tracking-widest rounded-sm hover:bg-yellow-400 transition-all transform hover:scale-105 shadow-[0_0_20px_rgba(234,179,8,0.3)] hover:shadow-[0_0_30px_rgba(234,179,8,0.5)]"
             >
-              View News
+              Join Premium
             </Link>
             <Link
               href="/predictions"
-              className="px-8 py-3 bg-transparent border-2 border-white text-white font-bold uppercase tracking-wider rounded-sm hover:bg-white hover:text-black transition-all transform hover:scale-105"
+              className="px-10 py-4 bg-white/5 border border-white/20 backdrop-blur-sm text-white font-bold uppercase tracking-widest rounded-sm hover:bg-white hover:text-black transition-all transform hover:scale-105"
             >
-              Get Predictions
+              Free Predictions
             </Link>
           </div>
         </div>
 
         {/* Breaking News Ticker */}
-        <div className="absolute bottom-0 left-0 right-0 bg-primary/90 text-black py-2 overflow-hidden">
-          <div className="container mx-auto px-4 flex items-center">
-            <span className="font-bold uppercase tracking-wide mr-4 bg-black text-primary px-2 py-1 text-xs rounded">Breaking</span>
-            <div className="whitespace-nowrap animate-marquee flex-1">
-              <span className="mx-4">Mbappe scores hat-trick in thrilling Classico.</span>
-              <span className="mx-4">•</span>
-              <span className="mx-4">Transfer Rumour: Osimhen linked with Chelsea move.</span>
-              <span className="mx-4">•</span>
-              <span className="mx-4">Champions League Draw: Arsenal faces Bayern Munich.</span>
-            </div>
-          </div>
-        </div>
+        <BreakingNewsTicker initialNews={latestNews} />
       </section>
 
       {/* News Feed - Fetched Dynamically */}

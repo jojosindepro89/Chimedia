@@ -19,7 +19,7 @@ export default async function NewsPage() {
     // Let's just show DB posts first (Official), then External News (Trending)
 
     return (
-        <div className="bg-black min-h-screen pb-20">
+        <div className="bg-black min-h-screen pb-20 animate-fade-in-up">
             {/* Header */}
             <div className="bg-zinc-900 border-b border-white/10 py-20">
                 <div className="container mx-auto px-4 text-center">

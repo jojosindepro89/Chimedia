@@ -22,7 +22,7 @@ export default function LoginPage() {
     };
 
     return (
-        <div className="min-h-screen bg-black flex items-center justify-center relative overflow-hidden">
+        <div className="min-h-screen bg-black flex items-center justify-center relative overflow-hidden animate-fade-in-up">
             {/* Background decoration */}
             <div className="absolute inset-0 z-0 opacity-20 bg-[url('https://images.unsplash.com/photo-1556056504-5c7696c4c28d?q=80&w=2076&auto=format&fit=crop')] bg-cover bg-center"></div>
 

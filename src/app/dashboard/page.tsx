@@ -28,7 +28,7 @@ export default async function DashboardPage() {
     const orders = user.orders;
 
     return (
-        <div className="flex min-h-screen bg-black text-white">
+        <div className="flex min-h-screen bg-black text-white animate-fade-in-up">
             <DashboardSidebar />
 
             <div className="flex-1 p-8">

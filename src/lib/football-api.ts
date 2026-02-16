@@ -4,6 +4,9 @@ const RAPIDAPI_KEY = process.env.RAPIDAPI_KEY;
 const API_SPORTS_KEY = process.env.API_SPORTS_KEY;
 const BASE_URL = "https://v3.football.api-sports.io";
 
+console.log("API_SPORTS_KEY present:", !!API_SPORTS_KEY);
+
+
 function getHeaders() {
     if (API_SPORTS_KEY) {
         return {
@@ -299,3 +302,23 @@ const MOCK_LEAGUES: League[] = [
     { id: 135, name: "Serie A", country: "Italy", logo: "https://media.api-sports.io/football/leagues/135.png", flag: "https://media.api-sports.io/flags/it.svg" },
     { id: 61, name: "Ligue 1", country: "France", logo: "https://media.api-sports.io/football/leagues/61.png", flag: "https://media.api-sports.io/flags/fr.svg" },
 ];
+
+export async function getPredictions(fixtureId: number): Promise<any> {
+    const headers = getHeaders();
+    if (!headers) return null;
+
+    try {
+        const response = await fetch(`${BASE_URL}/predictions?fixture=${fixtureId}`, {
+            headers: headers as any,
+            next: { revalidate: 86400 } // Cache for 24 hours (predictions don't change much)
+        });
+
+        if (!response.ok) return null;
+
+        const data = await response.json();
+        return data.response[0] || null;
+    } catch (error) {
+        console.error("Failed to fetch predictions:", error);
+        return null;
+    }
+}

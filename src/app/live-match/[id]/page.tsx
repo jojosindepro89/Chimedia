@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { ArrowLeft, BarChart2 } from "lucide-react";
+import LiveStreamWidget from "@/components/LiveStreamWidget";
 import { getMatchDetails } from "@/lib/football-api";
 import { notFound } from "next/navigation";
 
@@ -61,17 +62,11 @@ export default async function LiveMatchPage({ params }: { params: Promise<{ id: 
                 {/* Left: Stream / Visuals */}
                 <div className="lg:col-span-2 space-y-8">
                     {/* Stream Embed */}
-                    <div className="bg-zinc-900 border border-white/5 rounded overflow-hidden shadow-2xl relative aspect-video group">
-                        <iframe
-                            src="https://yallalive.sx/page/87/"
-                            className="w-full h-full border-0"
-                            allow="autoplay; encrypted-media"
-                            allowFullScreen
-                            title="Live Stream"
+                    <div className="bg-zinc-900 border border-white/5 rounded overflow-hidden shadow-2xl relative">
+                        <LiveStreamWidget
+                            homeTeam={match.home.name}
+                            awayTeam={match.away.name}
                         />
-                        <div className="absolute top-4 right-4 bg-red-600 text-white text-xs font-bold px-3 py-1 rounded uppercase animate-pulse z-10 pointer-events-none">
-                            Live Stream
-                        </div>
                     </div>
 
                     {/* Match Events Timeline (Mock) */}
