@@ -46,7 +46,7 @@ export default function Navbar() {
             <div className="container mx-auto px-4 flex items-center justify-between">
                 {/* Logo */}
                 <Link href="/" className="block">
-                    <img src="/logo.svg" alt="Chigozie Media House" className="h-20 w-auto object-contain" />
+                    <img src="/logo.png" alt="Chigozie Media House" className="h-20 w-auto object-contain" />
                 </Link>
 
                 {/* Desktop Nav */}

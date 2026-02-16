@@ -9,7 +9,7 @@ export default function Footer() {
                     {/* Brand */}
                     <div className="col-span-1 md:col-span-1">
                         <Link href="/" className="block mb-6">
-                            <img src="/logo.svg" alt="Chigozie Media House" className="h-16 w-auto object-contain" />
+                            <img src="/logo.png" alt="Chigozie Media House" className="h-16 w-auto object-contain" />
                         </Link>
                         <p className="text-gray-400 text-sm mb-6">
                             Your ultimate destination for premium football news, transfer updates, and expert betting predictions.
