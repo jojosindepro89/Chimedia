@@ -12,7 +12,7 @@ export interface DailyTip {
     status: "PENDING" | "WON" | "LOST";
     isPremium: boolean;
     isBanker: boolean;
-    analysis?: string;
+    analysis: string | null;
 }
 
 export async function getDailyPredictions(): Promise<{ free: DailyTip[], premium: DailyTip[] }> {
@@ -98,7 +98,7 @@ export async function getDailyPredictions(): Promise<{ free: DailyTip[], premium
             status: "PENDING",
             isPremium: isPremium,
             isBanker: isBanker,
-            analysis: prediction.comment // "Manchester City is in good form..."
+            analysis: prediction.comment || null
         } as DailyTip;
     });
 
