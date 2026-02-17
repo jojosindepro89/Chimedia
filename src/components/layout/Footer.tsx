@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { Facebook, Twitter, Instagram, Youtube, Mail } from "lucide-react";
 
 export default function Footer() {
@@ -8,8 +9,13 @@ export default function Footer() {
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
                     {/* Brand */}
                     <div className="col-span-1 md:col-span-1">
-                        <Link href="/" className="block mb-6">
-                            <img src="/logo.png" alt="Chigozie Media House" className="h-16 w-auto object-contain" />
+                        <Link href="/" className="block mb-6 relative w-48 h-16">
+                            <Image
+                                src="/logo.png"
+                                alt="Chigozie Media House"
+                                fill
+                                className="object-contain"
+                            />
                         </Link>
                         <p className="text-gray-400 text-sm mb-6">
                             Your ultimate destination for premium football news, transfer updates, and expert betting predictions.

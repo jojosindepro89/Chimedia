@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { Menu, X, Search, User, ShoppingBag } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -45,8 +46,14 @@ export default function Navbar() {
         >
             <div className="container mx-auto px-4 flex items-center justify-between">
                 {/* Logo */}
-                <Link href="/" className="block">
-                    <img src="/logo.png" alt="Chigozie Media House" className="h-20 w-auto object-contain" />
+                <Link href="/" className="block relative w-60 h-20">
+                    <Image
+                        src="/logo.png"
+                        alt="Chigozie Media House"
+                        fill
+                        className="object-contain"
+                        priority
+                    />
                 </Link>
 
                 {/* Desktop Nav */}
