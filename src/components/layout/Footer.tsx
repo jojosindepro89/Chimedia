@@ -32,6 +32,7 @@ export default function Footer() {
                         <ul className="space-y-3">
                             <FooterLink href="/news" label="News" />
                             <FooterLink href="/live-scores" label="Live Scores" />
+                            <FooterLink href="/membership" label="Membership" />
                         </ul>
                     </div>
 
@@ -40,7 +41,7 @@ export default function Footer() {
                         <h3 className="text-primary font-bold uppercase tracking-wider mb-6">Support</h3>
                         <ul className="space-y-3">
                             <FooterLink href="/contact" label="Contact Us" />
-                            <FooterLink href="/membership" label="Membership" />
+                            <FooterLink href="/return-policy" label="Return Policy" />
                             <FooterLink href="/terms" label="Terms of Service" />
                             <FooterLink href="/privacy" label="Privacy Policy" />
                         </ul>
