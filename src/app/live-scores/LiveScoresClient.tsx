@@ -5,7 +5,7 @@ import { useState, useEffect } from "react";
 import { Search, Clock, Calendar, Filter } from "lucide-react";
 import clsx from "clsx";
 
-import { Match } from "@/lib/football-api";
+import { Match } from "@/types/football";
 
 interface LiveScoresClientProps {
     initialMatches: Match[];

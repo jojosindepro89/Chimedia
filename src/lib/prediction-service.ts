@@ -1,4 +1,5 @@
-import { getFixtures, getPredictions, Match } from "./football-api";
+import { getFixtures, getPredictions } from "./football-api";
+import { Match } from "@/types/football";
 
 export interface DailyTip {
     id: string;
