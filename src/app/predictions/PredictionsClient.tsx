@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Lock, CheckCircle, XCircle, AlertCircle, Star } from "lucide-react";
 import Link from "next/link";
 import clsx from "clsx";
+import LivePredictionsSection from "./LivePredictionsSection";
 
 interface DailyTip {
     id: string;
@@ -121,10 +122,14 @@ function TabButton({ children, active, onClick, isPremium }: any) {
             onClick={onClick}
             className={clsx(
                 "px-8 py-3 font-bold uppercase tracking-wide rounded-sm transition-all border-b-2",
-                active ? (isPremium ? "border-primary text-primary bg-primary/10" : "border-white text-white bg-white/10") : "border-transparent text-gray-500 hover:text-white"
+                active ?
+                    (isPremium ? "border-primary text-primary bg-primary/10" :
+                        "border-white text-white bg-white/10")
+                    : "border-transparent text-gray-500 hover:text-white"
             )}
         >
-            {children} {isPremium && <span className="ml-2 text-xs bg-primary text-black px-1.5 py-0.5 rounded align-top">PRO</span>}
+            {children}
+            {isPremium && <span className="ml-2 text-xs bg-primary text-black px-1.5 py-0.5 rounded align-top">PRO</span>}
         </button>
     )
 }

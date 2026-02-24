@@ -1,8 +1,8 @@
 import React from 'react';
 
 export const metadata = {
-    title: 'Privacy Policy | ChiMedia',
-    description: 'Privacy Policy for ChiMedia and ChigoExpress.',
+    title: 'Privacy Policy | Chigoziemedia House',
+    description: 'Privacy Policy for Chigoziemedia House.',
 };
 
 export default function PrivacyPolicyPage() {
@@ -16,7 +16,7 @@ export default function PrivacyPolicyPage() {
                         <section>
                             <h2 className="text-xl font-semibold text-white mb-3">1. Introduction</h2>
                             <p>
-                                Welcome to ChiMedia ("we," "our," or "us"). We are committed to protecting your privacy and ensuring your personal information is handled in a safe and responsible manner. This Privacy Policy explains how we collect, use, and protect your data when you visit our website, use our services, or purchase products from ChigoExpress.
+                                Welcome to Chigoziemedia House ("we," "our," or "us"). We are committed to protecting your privacy and ensuring your personal information is handled in a safe and responsible manner. This Privacy Policy explains how we collect, use, and protect your data when you visit our website, use our services, or purchase products from Chigoziemedia House.
                             </p>
                         </section>
 
@@ -34,7 +34,7 @@ export default function PrivacyPolicyPage() {
                             <h2 className="text-xl font-semibold text-white mb-3">3. How We Use Your Information</h2>
                             <p className="mb-2">We use your data to:</p>
                             <ul className="list-disc pl-5 space-y-1">
-                                <li>Process and deliver your orders from ChigoExpress.</li>
+                                <li>Process and deliver your orders from Chigoziemedia House.</li>
                                 <li>Manage your account and subscription to our premium sports predictions.</li>
                                 <li>Communicate with you regarding updates, offers, and customer support.</li>
                                 <li>Improve our website functionality and user experience.</li>
@@ -81,7 +81,7 @@ export default function PrivacyPolicyPage() {
                             <h2 className="text-xl font-semibold text-white mb-3">9. Contact Us</h2>
                             <p>
                                 If you have any questions about this Privacy Policy, please contact us at: <br />
-                                <a href="mailto:support@chimedia.com" className="text-primary hover:underline">support@chimedia.com</a>
+                                <a href="mailto:support@chigoziemediahouse.com" className="text-primary hover:underline">support@chigoziemediahouse.com</a>
                             </p>
                         </section>
                     </div>

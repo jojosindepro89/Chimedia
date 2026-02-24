@@ -1,8 +1,8 @@
 import React from 'react';
 
 export const metadata = {
-    title: 'Terms of Service | ChiMedia',
-    description: 'Terms of Service for ChiMedia and ChigoExpress.',
+    title: 'Terms of Service | Chigoziemedia House',
+    description: 'Terms of Service for Chigoziemedia House.',
 };
 
 export default function TermsPage() {
@@ -16,14 +16,14 @@ export default function TermsPage() {
                         <section>
                             <h2 className="text-xl font-semibold text-white mb-3">1. Acceptance of Terms</h2>
                             <p>
-                                By accessing and using the ChiMedia website and ChigoExpress services, you accept and agree to be bound by the terms and provision of this agreement. In addition, when using these specific services, you shall be subject to any posted guidelines or rules applicable to such services.
+                                By accessing and using the Chigoziemedia House website and Chigoziemedia House services, you accept and agree to be bound by the terms and provision of this agreement. In addition, when using these specific services, you shall be subject to any posted guidelines or rules applicable to such services.
                             </p>
                         </section>
 
                         <section>
                             <h2 className="text-xl font-semibold text-white mb-3">2. Services Description</h2>
                             <p>
-                                ChiMedia provides sports news, analysis, and premium betting predictions. ChigoExpress offers an online marketplace for various consumer goods. We reserve the right to modify, suspend, or discontinue any aspect of our services at any time without notice.
+                                Chigoziemedia House provides sports news, analysis, and premium betting predictions. Chigoziemedia House offers an online marketplace for various consumer goods. We reserve the right to modify, suspend, or discontinue any aspect of our services at any time without notice.
                             </p>
                         </section>
 
@@ -37,7 +37,7 @@ export default function TermsPage() {
                         <section>
                             <h2 className="text-xl font-semibold text-white mb-3">4. Purchases and Payments</h2>
                             <p>
-                                All purchases made on ChigoExpress and subscriptions for ChiMedia premium content are processed securely through Paystack. Prices are subject to change without notice. We are not responsible for any errors in pricing or product descriptions, though we strive for accuracy.
+                                All purchases made on Chigoziemedia House and subscriptions for Chigoziemedia House premium content are processed securely through Paystack. Prices are subject to change without notice. We are not responsible for any errors in pricing or product descriptions, though we strive for accuracy.
                             </p>
                         </section>
 
@@ -59,21 +59,21 @@ export default function TermsPage() {
                             <h2 className="text-xl font-semibold text-white mb-3">6. Refunds and Returns Policy</h2>
                             <ul className="list-disc pl-5 space-y-1">
                                 <li><strong>Digital Goods (Subscriptions):</strong> Due to the nature of digital content, subscriptions for premium predictions are generally non-refundable once accessed.</li>
-                                <li><strong>Physical Goods (ChigoExpress):</strong> Returns are accepted for defective or damaged items within 7 days of delivery, provided they are in their original packaging. Please contact support to initiate a return.</li>
+                                <li><strong>Physical Goods (Chigoziemedia House):</strong> Returns are accepted for defective or damaged items within 7 days of delivery, provided they are in their original packaging. Please contact support to initiate a return.</li>
                             </ul>
                         </section>
 
                         <section>
                             <h2 className="text-xl font-semibold text-white mb-3">7. Intellectual Property</h2>
                             <p>
-                                All content on this site, including text, graphics, logos, and software, is the property of ChiMedia and protected by international copyright laws. You may not reproduce, distribute, or create derivative works from this content without express written permission.
+                                All content on this site, including text, graphics, logos, and software, is the property of Chigoziemedia House and protected by international copyright laws. You may not reproduce, distribute, or create derivative works from this content without express written permission.
                             </p>
                         </section>
 
                         <section>
                             <h2 className="text-xl font-semibold text-white mb-3">8. Limitation of Liability</h2>
                             <p>
-                                In no event shall ChiMedia or its owners be liable for any direct, indirect, incidental, special, or consequential damages resulting from the use or inability to use our services, including but not limited to damages for loss of profits, data, or other intangibles.
+                                In no event shall Chigoziemedia House or its owners be liable for any direct, indirect, incidental, special, or consequential damages resulting from the use or inability to use our services, including but not limited to damages for loss of profits, data, or other intangibles.
                             </p>
                         </section>
 
@@ -88,7 +88,7 @@ export default function TermsPage() {
                             <h2 className="text-xl font-semibold text-white mb-3">10. Contact Information</h2>
                             <p>
                                 For any questions regarding these Terms of Service, please contact us at: <br />
-                                <a href="mailto:support@chimedia.com" className="text-primary hover:underline">support@chimedia.com</a>
+                                <a href="mailto:support@chigoziemediahouse.com" className="text-primary hover:underline">support@chigoziemediahouse.com</a>
                             </p>
                         </section>
                     </div>

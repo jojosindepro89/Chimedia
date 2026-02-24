@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation";
+import { Match, League } from "@/types/football";
 
 const RAPIDAPI_KEY = process.env.RAPIDAPI_KEY;
 const API_SPORTS_KEY = process.env.API_SPORTS_KEY;
@@ -22,62 +23,11 @@ function getHeaders() {
     return null;
 }
 
-export interface Match {
-    id: number;
-    league: {
-        name: string;
-        logo: string;
-        flag: string;
-    };
-    home: {
-        name: string;
-        logo: string;
-    };
-    away: {
-        name: string;
-        logo: string;
-    };
-    goals: {
-        home: number | null;
-        away: number | null;
-    };
-    status: {
-        short: string; // "1H", "FT", "NS", "LIVE"
-        elapsed: number | null;
-        long: string;
-    };
-    fixture: {
-        date: string;
-        timestamp: number;
-    }
-}
-
-const MOCK_MATCHES: Match[] = [
-    {
-        id: 1,
-        league: { name: "Premier League", logo: "", flag: "" },
-        home: { name: "Man City", logo: "https://media.api-sports.io/football/teams/50.png" },
-        away: { name: "Liverpool", logo: "https://media.api-sports.io/football/teams/40.png" },
-        goals: { home: 2, away: 1 },
-        status: { short: "LIVE", elapsed: 78, long: "Second Half" },
-        fixture: { date: new Date().toISOString(), timestamp: Date.now() }
-    },
-    {
-        id: 2,
-        league: { name: "La Liga", logo: "", flag: "" },
-        home: { name: "Real Madrid", logo: "https://media.api-sports.io/football/teams/541.png" },
-        away: { name: "Barcelona", logo: "https://media.api-sports.io/football/teams/529.png" },
-        goals: { home: 0, away: 0 },
-        status: { short: "NS", elapsed: null, long: "Not Started" },
-        fixture: { date: new Date().toISOString(), timestamp: Date.now() }
-    }
-];
-
 export async function getLiveMatches(): Promise<Match[]> {
     const headers = getHeaders();
     if (!headers) {
-        console.warn("⚠️ API Key missing. Serving mock football data.");
-        return MOCK_MATCHES;
+        console.warn("⚠️ API Key missing.");
+        return [];
     }
 
     try {
@@ -88,11 +38,17 @@ export async function getLiveMatches(): Promise<Match[]> {
 
         if (!response.ok) {
             console.error("API Error:", await response.text());
-            return MOCK_MATCHES;
+            return [];
         }
 
         const data = await response.json();
-        const matches: any[] = data.response;
+
+        if (data.errors && Object.keys(data.errors).length > 0) {
+            console.error("API-Sports Error (getLiveMatches):", data.errors);
+            return [];
+        }
+
+        const matches: any[] = data.response || [];
 
         return matches.map(m => ({
             id: m.fixture.id,
@@ -126,29 +82,26 @@ export async function getLiveMatches(): Promise<Match[]> {
 
     } catch (error) {
         console.error("Failed to fetch live matches:", error);
-        return MOCK_MATCHES;
+        return [];
     }
 }
 
 export async function getLeagues(): Promise<League[]> {
     const headers = getHeaders();
     if (!headers) {
-        return MOCK_LEAGUES;
+        return [];
     }
 
     try {
-        // Fetching all leagues is too much (1000+). Let's fetch major ones by ID or just default to mock/static list if we want specific ones.
-        // Better: Fetch specific IDs we care about.
-        // Premier League: 39, La Liga: 140, Bundesliga: 78, Serie A: 135, Ligue 1: 61, UCL: 2
         const response = await fetch(`${BASE_URL}/leagues?current=true`, {
             headers: headers as any,
             next: { revalidate: 86400 } // Cache for 24 hours
         });
 
-        if (!response.ok) return MOCK_LEAGUES;
+        if (!response.ok) return [];
 
         const data = await response.json();
-        const leagues: any[] = data.response;
+        const leagues: any[] = data.response || [];
 
         // Filter for top 5 + UCL
         const topLeagueIds = [39, 140, 78, 135, 61, 2];
@@ -164,14 +117,14 @@ export async function getLeagues(): Promise<League[]> {
 
     } catch (error) {
         console.error("Failed to fetch leagues:", error);
-        return MOCK_LEAGUES;
+        return [];
     }
 }
 
 export async function getFixtures(date?: string): Promise<Match[]> {
     const headers = getHeaders();
     if (!headers) {
-        return MOCK_MATCHES;
+        return [];
     }
 
     const dateStr = date || new Date().toISOString().split('T')[0];
@@ -182,17 +135,18 @@ export async function getFixtures(date?: string): Promise<Match[]> {
             next: { revalidate: 300 } // Cache for 5 minutes
         });
 
-        if (!response.ok) return MOCK_MATCHES;
+        if (!response.ok) return [];
 
         const data = await response.json();
-        const matches: any[] = data.response;
 
-        // Filter for major leagues only to avoid clutter?
-        // Let's just return all and let the client filter if needed, or filter here to keep it clean.
-        // For now, let's keep it simple and filter for major leagues + a few others if needed, but the user asked for "livescores" to be "fixtures".
-        // Let's filter for the same top leagues as getLeagues to avoid 1000s of obscure matches.
+        if (data.errors && Object.keys(data.errors).length > 0) {
+            console.error("API-Sports Error (getFixtures):", data.errors);
+            return [];
+        }
+
+        const matches: any[] = data.response || [];
+
         const topLeagueIds = [39, 140, 78, 135, 61, 2, 3, 9, 45, 48, 143, 137, 529, 530, 531, 547, 556]; // Expanded list
-        // Actually, let's just show all for now or major ones.
         const filtered = matches.filter(m => topLeagueIds.includes(m.league.id));
 
         return filtered.map(m => ({
@@ -227,16 +181,14 @@ export async function getFixtures(date?: string): Promise<Match[]> {
 
     } catch (error) {
         console.error("Failed to fetch fixtures:", error);
-        return MOCK_MATCHES;
+        return [];
     }
 }
 
 export async function getMatchDetails(id: string): Promise<Match | null> {
     const headers = getHeaders();
     if (!headers) {
-        // Return a mock match if ID matches one of the mocks
-        const mock = MOCK_MATCHES.find(m => m.id.toString() === id);
-        return mock || MOCK_MATCHES[0];
+        return null;
     }
 
     try {
@@ -248,6 +200,12 @@ export async function getMatchDetails(id: string): Promise<Match | null> {
         if (!response.ok) return null;
 
         const data = await response.json();
+
+        if (data.errors && Object.keys(data.errors).length > 0) {
+            console.error("API-Sports Error (getMatchDetails):", data.errors);
+            return null;
+        }
+
         const m = data.response[0];
 
         if (!m) return null;
@@ -287,22 +245,6 @@ export async function getMatchDetails(id: string): Promise<Match | null> {
     }
 }
 
-export interface League {
-    id: number;
-    name: string;
-    country: string;
-    logo: string;
-    flag: string;
-}
-
-const MOCK_LEAGUES: League[] = [
-    { id: 39, name: "Premier League", country: "England", logo: "https://media.api-sports.io/football/leagues/39.png", flag: "https://media.api-sports.io/flags/gb.svg" },
-    { id: 140, name: "La Liga", country: "Spain", logo: "https://media.api-sports.io/football/leagues/140.png", flag: "https://media.api-sports.io/flags/es.svg" },
-    { id: 78, name: "Bundesliga", country: "Germany", logo: "https://media.api-sports.io/football/leagues/78.png", flag: "https://media.api-sports.io/flags/de.svg" },
-    { id: 135, name: "Serie A", country: "Italy", logo: "https://media.api-sports.io/football/leagues/135.png", flag: "https://media.api-sports.io/flags/it.svg" },
-    { id: 61, name: "Ligue 1", country: "France", logo: "https://media.api-sports.io/football/leagues/61.png", flag: "https://media.api-sports.io/flags/fr.svg" },
-];
-
 export async function getPredictions(fixtureId: number): Promise<any> {
     const headers = getHeaders();
     if (!headers) return null;
@@ -316,6 +258,12 @@ export async function getPredictions(fixtureId: number): Promise<any> {
         if (!response.ok) return null;
 
         const data = await response.json();
+
+        if (data.errors && Object.keys(data.errors).length > 0) {
+            console.error("API-Sports Error (getPredictions):", data.errors);
+            return null;
+        }
+
         return data.response[0] || null;
     } catch (error) {
         console.error("Failed to fetch predictions:", error);

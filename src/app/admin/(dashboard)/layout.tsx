@@ -32,6 +32,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
                     <AdminLink href="/admin/posts" icon={<FileText size={20} />} label="Posts" />
                     <AdminLink href="/admin/predictions" icon={<Trophy size={20} />} label="Predictions" />
                     <AdminLink href="/admin/fixtures" icon={<Trophy size={20} />} label="Fixtures" />
+                    <AdminLink href="/admin/api-config" icon={<Settings size={20} />} label="API Config" />
                     <AdminLink href="/admin/shop" icon={<ShoppingBag size={20} />} label="Shop Products" />
                     <AdminLink href="/admin/orders" icon={<ShoppingBag size={20} />} label="Orders" />
                     <AdminLink href="/admin/members" icon={<Users size={20} />} label="Members" />

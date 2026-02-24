@@ -8,8 +8,6 @@ export default async function ShopPage() {
         orderBy: { createdAt: 'desc' }
     });
 
-    const categories = Array.from(new Set(products.map(p => p.category).filter(Boolean)));
-
     return (
         <div className="bg-black min-h-screen pb-20 animate-fade-in-up">
             <div className="bg-zinc-900 border-b border-white/10 py-16">
@@ -22,17 +20,6 @@ export default async function ShopPage() {
             </div>
 
             <div className="container mx-auto px-4 mt-12">
-                {/* Categories */}
-                <div className="flex flex-wrap justify-center gap-4 mb-12">
-                    <button className="px-6 py-2 border border-white/10 rounded-full text-white hover:border-primary hover:text-primary transition-colors text-sm font-medium uppercase bg-white/5">
-                        All Products
-                    </button>
-                    {categories.map(cat => (
-                        <button key={cat} className="px-6 py-2 border border-white/10 rounded-full text-white hover:border-primary hover:text-primary transition-colors text-sm font-medium uppercase">
-                            {cat}
-                        </button>
-                    ))}
-                </div>
 
                 {/* Product Grid */}
                 {products.length === 0 ? (
