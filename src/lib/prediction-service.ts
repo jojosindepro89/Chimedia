@@ -26,7 +26,7 @@ export async function getDailyPredictions(): Promise<{ free: DailyTip[], premium
 
         const candidates = matches
             .filter(m => topLeagues.includes(m.league.name) && m.status.short === "NS")
-            .slice(0, 5); // Limit to 5 predictions to save quota
+            .slice(0, 20); // Limit to 20 predictions
 
         if (candidates.length === 0) {
             console.log("No real candidates for predictions today.");
