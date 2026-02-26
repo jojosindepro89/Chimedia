@@ -13,7 +13,8 @@ export async function initiateCheckout(amount: number) {
     const email = "customer@example.com";
 
     // callback URL
-    const callbackUrl = `${process.env.NEXTAUTH_URL || 'http://localhost:3000'}/payment/callback`;
+    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || process.env.NEXTAUTH_URL || (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000');
+    const callbackUrl = `${baseUrl}/payment/callback`;
 
     console.log("Payload:", { email, amount, callbackUrl });
 
@@ -90,7 +91,8 @@ export async function registerAndPay(formData: FormData) {
     await createSession({ name: user.name || '', email: user.email || '', role: user.role });
 
     // 3. Initiate Payment
-    const callbackUrl = `${process.env.NEXTAUTH_URL || 'http://localhost:3000'}/payment/callback?plan=${plan}&userId=${user.id}`;
+    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || process.env.NEXTAUTH_URL || (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000');
+    const callbackUrl = `${baseUrl}/payment/callback?plan=${plan}&userId=${user.id}`;
 
     try {
         const response = await initializePayment(email, amount, callbackUrl);
