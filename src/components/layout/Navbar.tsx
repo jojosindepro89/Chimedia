@@ -90,13 +90,19 @@ export default function Navbar() {
                     </Link>
                 </div>
 
-                {/* Mobile Toggle */}
-                <button
-                    className="lg:hidden text-white hover:text-primary"
-                    onClick={() => setIsOpen(!isOpen)}
-                >
-                    {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-                </button>
+                {/* Mobile Actions & Toggle */}
+                <div className="flex lg:hidden items-center space-x-5">
+                    <Link href="/cart" className="text-white hover:text-primary transition-colors relative">
+                        <ShoppingBag className="w-6 h-6" />
+                        <span className="absolute -top-1 -right-1 bg-primary text-black text-[10px] font-bold w-4 h-4 flex items-center justify-center rounded-full">{cartCount}</span>
+                    </Link>
+                    <button
+                        className="text-white hover:text-primary"
+                        onClick={() => setIsOpen(!isOpen)}
+                    >
+                        {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+                    </button>
+                </div>
             </div>
 
             {/* Mobile Menu */}
