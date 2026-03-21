@@ -19,8 +19,8 @@ function RegisterForm() {
                 <div className="bg-zinc-900/90 backdrop-blur-md border border-white/10 p-8 rounded-sm shadow-2xl">
                     <div className="text-center mb-8">
                         <Link href="/" className="text-3xl font-bold tracking-tighter uppercase block mb-2">
-                            <span className="text-white">Chigozie</span>
-                            <span className="text-primary ml-1">Media</span>
+                            <span className="text-white">cmh</span>
+                            <span className="text-primary ml-1">sports</span>
                         </Link>
                         <p className="text-gray-400 text-sm">Create an account to join the community</p>
                         {plan !== 'free' && (

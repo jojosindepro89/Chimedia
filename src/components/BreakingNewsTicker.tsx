@@ -22,7 +22,7 @@ export default function BreakingNewsTicker({ initialNews }: { initialNews: NewsI
                         </span>
                     ))}
                     {news.length === 0 && (
-                        <span className="mx-8">Welcome to Chigozie Media House - Your Home for Premium Sports Content</span>
+                        <span className="mx-8">Welcome to cmhsports - Your Home for Premium Sports Content</span>
                     )}
                 </div>
             </div>

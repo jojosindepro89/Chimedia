@@ -9,12 +9,12 @@ export default function AdminSettingsPage() {
                 <form className="space-y-6">
                     <div>
                         <label className="block text-xs uppercase font-bold text-gray-500 mb-2">Site Title</label>
-                        <input type="text" defaultValue="Chigozie Media House" className="w-full bg-black/50 border border-white/10 rounded px-4 py-3 text-white focus:outline-none focus:border-primary transition-colors" />
+                        <input type="text" defaultValue="cmhsports" className="w-full bg-black/50 border border-white/10 rounded px-4 py-3 text-white focus:outline-none focus:border-primary transition-colors" />
                     </div>
 
                     <div>
                         <label className="block text-xs uppercase font-bold text-gray-500 mb-2">Contact Email</label>
-                        <input type="email" defaultValue="support@chigoziemedia.com" className="w-full bg-black/50 border border-white/10 rounded px-4 py-3 text-white focus:outline-none focus:border-primary transition-colors" />
+                        <input type="email" defaultValue="support@cmhsports.com" className="w-full bg-black/50 border border-white/10 rounded px-4 py-3 text-white focus:outline-none focus:border-primary transition-colors" />
                     </div>
 
                     <div className="pt-4 border-t border-white/10">

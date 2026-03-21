@@ -134,6 +134,6 @@ export default function LiveScoresClient({ initialMatches }: LiveScoresClientPro
                     </Link>
                 ))}
             </div>
-        </div>
+        </div >
     );
 }

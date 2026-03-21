@@ -49,7 +49,7 @@ export default function Navbar() {
                 <Link href="/" className="block relative w-60 h-20">
                     <Image
                         src="/logo.png"
-                        alt="Chigozie Media House"
+                        alt="cmhsports"
                         fill
                         className="object-contain"
                         priority

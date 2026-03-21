@@ -16,7 +16,7 @@ const oswald = Oswald({
 });
 
 export const metadata: Metadata = {
-  title: "Chigozie Media House | Premium Football News & Predictions",
+  title: "cmhsports | Premium Football News & Predictions",
   description: "Your ultimate destination for football news, transfer updates, and expert betting predictions.",
 };
 

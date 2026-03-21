@@ -13,7 +13,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
             <aside className="w-64 bg-zinc-900 border-r border-white/10 flex flex-col">
                 <div className="p-6 border-b border-white/10">
                     <Link href="/" className="text-xl font-bold tracking-tighter uppercase block">
-                        <span className="text-white">Chigozie</span>
+                        <span className="text-white">cmhsports</span>
                         <span className="text-primary ml-1">Admin</span>
                     </Link>
                     <div className="mt-4 flex items-center gap-3">
@@ -22,7 +22,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
                         </div>
                         <div>
                             <div className="text-white font-bold text-sm">{user?.name || 'Admin'}</div>
-                            <div className="text-gray-500 text-xs">{user?.email || 'admin@chigozie.com'}</div>
+                            <div className="text-gray-500 text-xs">{user?.email || 'admin@cmhsports.com'}</div>
                         </div>
                     </div>
                 </div>

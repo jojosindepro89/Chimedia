@@ -10,23 +10,41 @@ function PaymentCallbackContent() {
     const searchParams = useSearchParams();
     const router = useRouter();
     const reference = searchParams.get("reference");
+    const plan = searchParams.get("plan");
+    const userId = searchParams.get("userId");
+
     const [status, setStatus] = useState<'loading' | 'success' | 'error'>('loading');
+    const [isSub, setIsSub] = useState(false);
 
     useEffect(() => {
         if (reference) {
             // Verify payment
-            // In a real app, you'd call an API route here to verify server-side
-            // /api/payment/verify?reference=...
-
-            // Simulating verification delay
-            setTimeout(() => {
-                setStatus('success');
-                // You would clear cart here
-            }, 2000);
+            fetch('/api/payment/verify', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ reference, plan, userId })
+            })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        setStatus('success');
+                        if (data.isSubscription) {
+                            setIsSub(true);
+                        }
+                    } else {
+                        setStatus('error');
+                    }
+                })
+                .catch(err => {
+                    console.error("Verification fetch error:", err);
+                    setStatus('error');
+                });
         } else {
             setStatus('error');
         }
-    }, [reference]);
+    }, [reference, plan, userId]);
 
     if (status === 'loading') {
         return (
@@ -43,9 +61,11 @@ function PaymentCallbackContent() {
             <div className="flex flex-col items-center">
                 <CheckCircle className="w-12 h-12 text-green-500 mb-4" />
                 <h2 className="text-xl font-bold uppercase mb-2">Payment Successful!</h2>
-                <p className="text-gray-400 mb-6">Thank you for your purchase. Your order has been confirmed.</p>
-                <Link href="/shop" className="bg-primary text-black font-bold uppercase px-8 py-3 rounded hover:bg-yellow-500 transition-colors">
-                    Continue Shopping
+                <p className="text-gray-400 mb-6">
+                    {isSub ? "Your membership is now active." : "Thank you for your purchase. Your order has been confirmed."}
+                </p>
+                <Link href={isSub ? "/dashboard" : "/shop"} className="bg-primary text-black font-bold uppercase px-8 py-3 rounded hover:bg-yellow-500 transition-colors">
+                    {isSub ? "Go to Dashboard" : "Continue Shopping"}
                 </Link>
             </div>
         );

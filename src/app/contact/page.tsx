@@ -53,7 +53,7 @@ export default function ContactPage() {
                         <div>
                             <h3 className="text-xl font-bold text-white uppercase mb-2">Email Us</h3>
                             <p className="text-gray-400 mb-2">For general inquiries and support.</p>
-                            <a href="mailto:support@chigoziemedia.com" className="text-primary font-bold hover:underline">support@chigoziemedia.com</a>
+                            <a href="mailto:support@cmhsports.com" className="text-primary font-bold hover:underline">support@cmhsports.com</a>
                         </div>
                     </div>
 

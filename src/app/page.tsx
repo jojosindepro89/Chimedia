@@ -42,7 +42,7 @@ export default async function Home() {
           </div>
 
           <h1 className="text-6xl md:text-8xl font-black uppercase tracking-tighter text-white mb-6 animate-fade-in-up drop-shadow-2xl">
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-yellow-200">Chigozie</span> <br /> Media House
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-yellow-200">cmh</span> <br /> sports
           </h1>
 
           <p className="text-xl md:text-2xl text-gray-300 mb-10 max-w-3xl mx-auto font-light leading-relaxed">

@@ -12,7 +12,7 @@ export default function Footer() {
                         <Link href="/" className="block mb-6 relative w-48 h-16">
                             <Image
                                 src="/logo.png"
-                                alt="Chigozie Media House"
+                                alt="cmhsports"
                                 fill
                                 className="object-contain"
                             />
@@ -72,7 +72,7 @@ export default function Footer() {
                 </div>
 
                 <div className="border-t border-white/10 pt-8 text-center text-gray-500 text-sm">
-                    <p>&copy; {new Date().getFullYear()} Chigozie Media House. All rights reserved.</p>
+                    <p>&copy; {new Date().getFullYear()} cmhsports. All rights reserved.</p>
                 </div>
             </div>
         </footer>

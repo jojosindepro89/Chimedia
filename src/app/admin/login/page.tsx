@@ -24,7 +24,7 @@ export default function AdminLoginPage() {
                     <div className="inline-block px-3 py-1 bg-primary/10 border border-primary/20 rounded-full mb-4">
                         <span className="text-primary text-[10px] font-bold uppercase tracking-widest">Secure Admin Portal</span>
                     </div>
-                    <h1 className="text-3xl font-bold text-white uppercase tracking-wider mb-2">Chigozie<span className="text-primary">.Admin</span></h1>
+                    <h1 className="text-3xl font-bold text-white uppercase tracking-wider mb-2">cmhsports<span className="text-primary">.Admin</span></h1>
                     <p className="text-gray-500 text-sm">Enter your credentials to access the control panel.</p>
                 </div>
 

@@ -2,7 +2,7 @@ import { ArrowLeft, RefreshCw, AlertTriangle, CheckCircle, HelpCircle } from "lu
 import Link from "next/link";
 
 export const metadata = {
-    title: "Return & Refund Policy | Chigozie Media House",
+    title: "Return & Refund Policy | cmhsports",
     description: "Our policy regarding returns, refunds, and cancellations for memberships and shop items."
 };
 
@@ -107,7 +107,7 @@ export default function ReturnPolicyPage() {
                         <div className="space-y-4 text-gray-300">
                             <p>To initiate a return or refund request, please follow these steps:</p>
                             <ol className="list-decimal ml-6 space-y-2">
-                                <li>Email our support team at <a href="mailto:support@chigoziemedia.com" className="text-primary hover:underline">support@chigoziemedia.com</a>.</li>
+                                <li>Email our support team at <a href="mailto:support@cmhsports.com" className="text-primary hover:underline">support@cmhsports.com</a>.</li>
                                 <li>Include your <strong>Order ID</strong> and the reason for the return.</li>
                                 <li>For physical items, please attach photos if there is damage.</li>
                             </ol>

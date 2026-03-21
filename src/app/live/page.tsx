@@ -32,7 +32,7 @@ export default function LiveHubPage() {
                         <h3 className="text-yellow-500 font-bold uppercase text-sm mb-1">Third-Party Content Disclaimer</h3>
                         <p className="text-gray-400 text-sm">
                             This content is hosted by a third-party provider (yallalive.sx).
-                            <strong> Chigozie Media House</strong> is not responsible for the content, accuracy, reliability, or any advertisements displayed within the stream.
+                            <strong> cmhsports</strong> is not responsible for the content, accuracy, reliability, or any advertisements displayed within the stream.
                         </p>
                     </div>
                 </div>
