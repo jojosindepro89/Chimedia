@@ -48,7 +48,7 @@ export default function CartPage() {
                                         </div>
                                     </div>
                                     <div className="flex items-center gap-6">
-                                        <div className="font-mono text-xl">${(item.price * item.quantity).toFixed(2)}</div>
+                                        <div className="font-mono text-xl">₦{(item.price * item.quantity).toFixed(2)}</div>
                                         <button onClick={() => removeItem(item.id)} className="text-gray-500 hover:text-red-500 transition-colors">
                                             <X className="w-5 h-5" />
                                         </button>
@@ -59,17 +59,17 @@ export default function CartPage() {
 
                         <div className="flex justify-between items-center text-gray-400 text-sm mb-2">
                             <span>Subtotal</span>
-                            <span>${cartTotal.toFixed(2)}</span>
+                            <span>₦{cartTotal.toFixed(2)}</span>
                         </div>
                         <div className="flex justify-between items-center text-gray-400 text-sm mb-6">
                             <span>Shipping</span>
-                            <span>${shipping.toFixed(2)}</span>
+                            <span>₦{shipping.toFixed(2)}</span>
                         </div>
 
                         <div className="flex justify-between items-start mb-8">
                             <div>
                                 <div className="text-gray-400 text-sm mb-1">Total</div>
-                                <div className="text-3xl font-bold text-primary">${finalTotal.toFixed(2)}</div>
+                                <div className="text-3xl font-bold text-primary">₦{finalTotal.toFixed(2)}</div>
                             </div>
                         </div>
 
