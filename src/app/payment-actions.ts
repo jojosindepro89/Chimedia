@@ -1,6 +1,7 @@
 'use server'
 
 import { redirect } from "next/navigation";
+import { headers } from "next/headers";
 import { initializePayment } from "@/lib/paystack";
 import { prisma } from "@/lib/prisma";
 import { hash } from "bcryptjs";
@@ -13,7 +14,12 @@ export async function initiateCheckout(amount: number) {
     const email = "customer@example.com";
 
     // callback URL
-    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || process.env.NEXTAUTH_URL || (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000');
+    const headersList = await headers();
+    const origin = headersList.get("origin");
+    const host = headersList.get("host");
+    const protocol = process.env.NODE_ENV === 'development' ? 'http' : 'https';
+    const baseUrl = origin || (host ? `${protocol}://${host}` : 'http://localhost:3000');
+    
     const callbackUrl = `${baseUrl}/payment/callback`;
 
     console.log("Payload:", { email, amount, callbackUrl });
@@ -91,14 +97,20 @@ export async function registerAndPay(formData: FormData) {
     await createSession({ name: user.name || '', email: user.email || '', role: user.role });
 
     // 3. Initiate Payment
-    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || process.env.NEXTAUTH_URL || (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000');
+    const headersList = await headers();
+    const origin = headersList.get("origin");
+    const host = headersList.get("host");
+    const protocol = process.env.NODE_ENV === 'development' ? 'http' : 'https';
+    const baseUrl = origin || (host ? `${protocol}://${host}` : 'http://localhost:3000');
+    
     const callbackUrl = `${baseUrl}/payment/callback?plan=${plan}&userId=${user.id}`;
 
+    let authUrl = null;
     try {
         const response = await initializePayment(email, amount, callbackUrl);
 
         if (response.status && response.data) {
-            redirect(response.data.authorization_url);
+            authUrl = response.data.authorization_url;
         } else {
             console.error("Payment init failed:", response);
             // Return error state (need to handle this in UI)
@@ -107,5 +119,9 @@ export async function registerAndPay(formData: FormData) {
     } catch (error) {
         console.error("Payment error:", error);
         throw error;
+    }
+    
+    if (authUrl) {
+        redirect(authUrl);
     }
 }

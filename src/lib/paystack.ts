@@ -1,8 +1,8 @@
 export const initializePayment = async (email: string, amount: number, callbackUrl: string) => {
-    // Paystack Amount is in kobo (Lowest currency unit), so multiply by 100
+    // Paystack Amount is in kobo (Lowest currency unit), so multiply by 100 and round
     const params = {
         email,
-        amount: amount * 100,
+        amount: Math.round(amount * 100),
         callback_url: callbackUrl,
     }
 
