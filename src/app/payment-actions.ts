@@ -1,11 +1,17 @@
 'use server'
 
 import { redirect } from "next/navigation";
-import { headers } from "next/headers";
 import { initializePayment } from "@/lib/paystack";
 import { prisma } from "@/lib/prisma";
 import { hash } from "bcryptjs";
 import { createSession } from "@/lib/session";
+
+function getBaseUrl() {
+    if (process.env.NEXT_PUBLIC_APP_URL) return process.env.NEXT_PUBLIC_APP_URL;
+    if (process.env.VERCEL_PROJECT_PRODUCTION_URL) return `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`;
+    if (process.env.VERCEL_URL) return `https://${process.env.VERCEL_URL}`;
+    return process.env.NEXTAUTH_URL || 'http://localhost:3000';
+}
 
 export async function initiateCheckout(amount: number) {
     console.log("🚀 initiateCheckout called with amount:", amount);
@@ -14,12 +20,7 @@ export async function initiateCheckout(amount: number) {
     const email = "customer@example.com";
 
     // callback URL
-    const headersList = await headers();
-    const origin = headersList.get("origin");
-    const host = headersList.get("host");
-    const protocol = process.env.NODE_ENV === 'development' ? 'http' : 'https';
-    const baseUrl = origin || (host ? `${protocol}://${host}` : 'http://localhost:3000');
-    
+    const baseUrl = getBaseUrl();
     const callbackUrl = `${baseUrl}/payment/callback`;
 
     console.log("Payload:", { email, amount, callbackUrl });
@@ -49,60 +50,32 @@ export async function registerAndPay(formData: FormData) {
     if (plan === 'weekly') amount = 1200;
     else if (plan === 'monthly') amount = 4000;
     else if (plan === 'free') {
-        // Free plan logic
-        // Create user
         const hashedPassword = await hash(password, 10);
         let user = await prisma.user.findUnique({ where: { email } });
 
         if (!user) {
             user = await prisma.user.create({
-                data: {
-                    name,
-                    email,
-                    password: hashedPassword,
-                    role: 'USER',
-                }
+                data: { name, email, password: hashedPassword, role: 'USER' }
             });
         }
 
-        // Create session
         await createSession({ name: user.name || '', email: user.email || '', role: user.role });
-
-        // Redirect to dashboard
         redirect('/dashboard');
         return;
     }
 
-    // 1. Check if user exists or create new
     let user = await prisma.user.findUnique({ where: { email } });
-
-    // Hash password
     const hashedPassword = await hash(password, 10);
 
     if (!user) {
         user = await prisma.user.create({
-            data: {
-                name,
-                email,
-                password: hashedPassword, // In production, use bcrypt hash
-                role: 'USER',
-            }
+            data: { name, email, password: hashedPassword, role: 'USER' }
         });
-    } else {
-        // Optional: Verify password if logging in existing user
-        // For now, we assume if they are paying, we just proceed
     }
 
-    // 2. Create Session
     await createSession({ name: user.name || '', email: user.email || '', role: user.role });
 
-    // 3. Initiate Payment
-    const headersList = await headers();
-    const origin = headersList.get("origin");
-    const host = headersList.get("host");
-    const protocol = process.env.NODE_ENV === 'development' ? 'http' : 'https';
-    const baseUrl = origin || (host ? `${protocol}://${host}` : 'http://localhost:3000');
-    
+    const baseUrl = getBaseUrl();
     const callbackUrl = `${baseUrl}/payment/callback?plan=${plan}&userId=${user.id}`;
 
     let authUrl = null;
@@ -113,7 +86,6 @@ export async function registerAndPay(formData: FormData) {
             authUrl = response.data.authorization_url;
         } else {
             console.error("Payment init failed:", response);
-            // Return error state (need to handle this in UI)
             throw new Error("Payment initialization failed");
         }
     } catch (error) {

@@ -1,0 +1,11 @@
+
+> cmhsports@0.1.0 start
+> next start -p 3005
+
+▲ Next.js 16.1.6
+- Local:         http://localhost:3005
+- Network:       http://192.168.2.26:3005
+
+✓ Starting...
+✓ Ready in 761ms
+API_SPORTS_KEY present: true
