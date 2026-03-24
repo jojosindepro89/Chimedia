@@ -33,7 +33,7 @@ export async function getLiveMatches(): Promise<Match[]> {
     try {
         const response = await fetch(`${BASE_URL}/fixtures?live=all`, {
             headers: headers as any,
-            next: { revalidate: 60 } // Cache for 60 seconds
+            next: { revalidate: 900 } // Cache for 15 minutes
         });
 
         if (!response.ok) {
@@ -132,7 +132,7 @@ export async function getFixtures(date?: string): Promise<Match[]> {
     try {
         const response = await fetch(`${BASE_URL}/fixtures?date=${dateStr}`, {
             headers: headers as any,
-            next: { revalidate: 300 } // Cache for 5 minutes
+            next: { revalidate: 21600 } // Cache for 6 hours
         });
 
         if (!response.ok) return [];
@@ -194,7 +194,7 @@ export async function getMatchDetails(id: string): Promise<Match | null> {
     try {
         const response = await fetch(`${BASE_URL}/fixtures?id=${id}`, {
             headers: headers as any,
-            next: { revalidate: 60 }
+            next: { revalidate: 21600 } // Cache for 6 hours
         });
 
         if (!response.ok) return null;
