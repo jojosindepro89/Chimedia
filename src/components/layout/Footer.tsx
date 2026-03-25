@@ -9,7 +9,7 @@ export default function Footer() {
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
                     {/* Brand */}
                     <div className="col-span-1 md:col-span-1">
-                        <Link href="/" className="block mb-6 relative w-48 h-16">
+                        <Link href="/" className="block mb-6 relative w-16 h-16">
                             <Image
                                 src="/logo.png"
                                 alt="cmhsports"

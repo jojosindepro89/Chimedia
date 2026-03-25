@@ -46,7 +46,7 @@ export default function Navbar() {
         >
             <div className="container mx-auto px-4 flex items-center justify-between">
                 {/* Logo */}
-                <Link href="/" className="block relative w-60 h-20">
+                <Link href="/" className="block relative w-20 h-20">
                     <Image
                         src="/logo.png"
                         alt="cmhsports"
