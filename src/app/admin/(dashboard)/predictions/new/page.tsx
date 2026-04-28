@@ -2,101 +2,121 @@
 
 import Link from "next/link";
 import { ArrowLeft, Save } from "lucide-react";
-import { useActionState } from "react";
+import { useActionState, useRef } from "react";
 import { createPrediction } from "@/app/actions";
+import dynamic from "next/dynamic";
 
-const initialState = {
-    message: '',
-}
+// Dynamically import the editor to avoid SSR issues
+const RichTextEditor = dynamic(() => import("@/components/admin/RichTextEditor"), { ssr: false });
+
+const initialState = { message: '' };
 
 export default function NewPredictionPage() {
-    const [state, formAction] = useActionState(createPrediction, initialState);
+    const [state, formAction, isPending] = useActionState(createPrediction, initialState);
 
     return (
         <div className="max-w-4xl mx-auto">
             <div className="flex items-center gap-4 mb-8">
-                <Link href="/admin/predictions" className="bg-zinc-800 p-2 rounded-full text-white hover:bg-zinc-700 transition-colors">
+                <Link href="/admin/predictions" className="bg-white/[0.06] hover:bg-white/10 p-2 rounded-lg text-white transition-colors">
                     <ArrowLeft className="w-5 h-5" />
                 </Link>
-                <h1 className="text-3xl font-bold text-white uppercase">New Prediction</h1>
+                <div>
+                    <h1 className="text-2xl font-black text-white uppercase tracking-tight">New Prediction</h1>
+                    <p className="text-gray-500 text-sm">Create a new tip for the predictions page.</p>
+                </div>
             </div>
 
-            <div className="bg-zinc-900 border border-white/10 rounded-sm p-8">
-                <form action={formAction} className="space-y-8">
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                        {/* Home Team */}
+            <form action={formAction} className="space-y-6">
+                {/* Match Details */}
+                <div className="bg-[#161616] border border-white/[0.08] rounded-xl p-6">
+                    <h2 className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-5">Match Details</h2>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                         <div>
-                            <label className="block text-xs uppercase font-bold text-gray-500 mb-2">Home Team</label>
-                            <input name="homeTeam" type="text" className="w-full bg-black/50 border border-white/10 rounded px-4 py-3 text-white focus:outline-none focus:border-primary transition-colors" placeholder="e.g. Manchester City" required />
+                            <label className="block text-xs uppercase font-bold text-gray-500 mb-2 tracking-wider">Home Team</label>
+                            <input name="homeTeam" type="text" required
+                                className="w-full bg-black/40 border border-white/[0.08] rounded-lg px-4 py-3 text-white text-sm focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/20 transition-all placeholder-gray-700"
+                                placeholder="e.g. Manchester City" />
                         </div>
-
-                        {/* Away Team */}
                         <div>
-                            <label className="block text-xs uppercase font-bold text-gray-500 mb-2">Away Team</label>
-                            <input name="awayTeam" type="text" className="w-full bg-black/50 border border-white/10 rounded px-4 py-3 text-white focus:outline-none focus:border-primary transition-colors" placeholder="e.g. Liverpool" required />
-                        </div>
-                    </div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                        {/* Market */}
-                        <div>
-                            <label className="block text-xs uppercase font-bold text-gray-500 mb-2">Market / Selection</label>
-                            <input name="market" type="text" className="w-full bg-black/50 border border-white/10 rounded px-4 py-3 text-white focus:outline-none focus:border-primary transition-colors" placeholder="e.g. Over 2.5 Goals" required />
-                        </div>
-
-                        {/* Odds */}
-                        <div>
-                            <label className="block text-xs uppercase font-bold text-gray-500 mb-2">Odds</label>
-                            <input name="odds" type="number" step="0.01" className="w-full bg-black/50 border border-white/10 rounded px-4 py-3 text-white focus:outline-none focus:border-primary transition-colors" placeholder="1.85" required />
-                        </div>
-
-                        {/* Confidence */}
-                        <div>
-                            <label className="block text-xs uppercase font-bold text-gray-500 mb-2">Confidence (%)</label>
-                            <input name="confidence" type="number" max="100" className="w-full bg-black/50 border border-white/10 rounded px-4 py-3 text-white focus:outline-none focus:border-primary transition-colors" placeholder="85" />
+                            <label className="block text-xs uppercase font-bold text-gray-500 mb-2 tracking-wider">Away Team</label>
+                            <input name="awayTeam" type="text" required
+                                className="w-full bg-black/40 border border-white/[0.08] rounded-lg px-4 py-3 text-white text-sm focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/20 transition-all placeholder-gray-700"
+                                placeholder="e.g. Liverpool" />
                         </div>
                     </div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                        {/* Date/Time */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mt-5">
                         <div>
-                            <label className="block text-xs uppercase font-bold text-gray-500 mb-2">Kickoff Time</label>
-                            <input name="date" type="datetime-local" className="w-full bg-black/50 border border-white/10 rounded px-4 py-3 text-white focus:outline-none focus:border-primary transition-colors" required />
+                            <label className="block text-xs uppercase font-bold text-gray-500 mb-2 tracking-wider">League / Competition</label>
+                            <input name="league" type="text"
+                                className="w-full bg-black/40 border border-white/[0.08] rounded-lg px-4 py-3 text-white text-sm focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/20 transition-all placeholder-gray-700"
+                                placeholder="e.g. Premier League" />
                         </div>
-
-                        {/* Type */}
                         <div>
-                            <label className="block text-xs uppercase font-bold text-gray-500 mb-2">Tier</label>
-                            <select name="type" className="w-full bg-black/50 border border-white/10 rounded px-4 py-3 text-white focus:outline-none focus:border-primary transition-colors appearance-none">
-                                <option value="free">Free Tip</option>
-                                <option value="premium">Premium (Pro Only)</option>
-                                <option value="banker">Banker of the Day</option>
-                            </select>
+                            <label className="block text-xs uppercase font-bold text-gray-500 mb-2 tracking-wider">Kickoff Time</label>
+                            <input name="date" type="datetime-local" required
+                                className="w-full bg-black/40 border border-white/[0.08] rounded-lg px-4 py-3 text-white text-sm focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/20 transition-all" />
                         </div>
                     </div>
+                </div>
 
-                    {/* Analysis */}
-                    <div>
-                        <label className="block text-xs uppercase font-bold text-gray-500 mb-2">Expert Analysis (Optional)</label>
-                        <textarea name="analysis" rows={5} className="w-full bg-black/50 border border-white/10 rounded px-4 py-3 text-white focus:outline-none focus:border-primary transition-colors" placeholder="Why is this a good bet?"></textarea>
+                {/* Prediction Details */}
+                <div className="bg-[#161616] border border-white/[0.08] rounded-xl p-6">
+                    <h2 className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-5">Prediction Details</h2>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+                        <div>
+                            <label className="block text-xs uppercase font-bold text-gray-500 mb-2 tracking-wider">Market / Bet Type</label>
+                            <input name="market" type="text" required
+                                className="w-full bg-black/40 border border-white/[0.08] rounded-lg px-4 py-3 text-white text-sm focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/20 transition-all placeholder-gray-700"
+                                placeholder="e.g. Over 2.5 Goals" />
+                        </div>
+                        <div>
+                            <label className="block text-xs uppercase font-bold text-gray-500 mb-2 tracking-wider">Odds</label>
+                            <input name="odds" type="number" step="0.01" min="1" required
+                                className="w-full bg-black/40 border border-white/[0.08] rounded-lg px-4 py-3 text-white text-sm focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/20 transition-all placeholder-gray-700"
+                                placeholder="1.85" />
+                        </div>
+                        <div>
+                            <label className="block text-xs uppercase font-bold text-gray-500 mb-2 tracking-wider">Confidence (%)</label>
+                            <input name="confidence" type="number" min="1" max="100"
+                                className="w-full bg-black/40 border border-white/[0.08] rounded-lg px-4 py-3 text-white text-sm focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/20 transition-all placeholder-gray-700"
+                                placeholder="85" />
+                        </div>
                     </div>
-
-                    {state?.message && (
-                        <p className="text-red-500 text-sm font-bold">{state.message}</p>
-                    )}
-
-                    {/* Actions */}
-                    <div className="flex items-center justify-end gap-4 pt-4 border-t border-white/10">
-                        <Link href="/admin/predictions" className="px-6 py-3 text-gray-400 font-bold uppercase hover:text-white transition-colors">
-                            Cancel
-                        </Link>
-                        <button type="submit" className="bg-primary text-black font-bold uppercase px-8 py-3 rounded hover:bg-yellow-500 transition-colors flex items-center gap-2">
-                            <Save className="w-4 h-4" /> Save Prediction
-                        </button>
+                    <div className="mt-5">
+                        <label className="block text-xs uppercase font-bold text-gray-500 mb-2 tracking-wider">Tier</label>
+                        <select name="type"
+                            className="bg-black/40 border border-white/[0.08] rounded-lg px-4 py-3 text-white text-sm focus:outline-none focus:border-primary/50 transition-all appearance-none w-full md:w-auto md:min-w-[200px]">
+                            <option value="free">🆓 Free Tip</option>
+                            <option value="premium">⭐ Premium (Pro Only)</option>
+                            <option value="banker">🏆 Banker of the Day</option>
+                        </select>
                     </div>
-                </form>
-            </div>
+                </div>
+
+                {/* Expert Analysis - Rich Text Editor */}
+                <div className="bg-[#161616] border border-white/[0.08] rounded-xl p-6">
+                    <h2 className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">Expert Analysis</h2>
+                    <p className="text-gray-600 text-xs mb-5">Write your full prediction breakdown. Use the toolbar to format it like a Word document — headings, bold, lists, alignment, and more.</p>
+                    <RichTextEditor name="analysis" placeholder="Write your detailed expert analysis here... Use headings, bold text, bullet points, and quotes to make it easy to read." />
+                </div>
+
+                {state?.message && (
+                    <div className="bg-red-500/10 border border-red-500/20 text-red-400 text-sm font-bold p-4 rounded-xl">
+                        {state.message}
+                    </div>
+                )}
+
+                <div className="flex items-center justify-end gap-4 pt-2">
+                    <Link href="/admin/predictions" className="px-6 py-3 text-gray-500 font-bold uppercase text-sm hover:text-white transition-colors">
+                        Cancel
+                    </Link>
+                    <button type="submit" disabled={isPending}
+                        className="bg-primary text-black font-black uppercase px-8 py-3 rounded-xl hover:bg-yellow-400 transition-all shadow-lg shadow-primary/20 flex items-center gap-2 disabled:opacity-50 text-sm">
+                        <Save className="w-4 h-4" />
+                        {isPending ? "Saving..." : "Save Prediction"}
+                    </button>
+                </div>
+            </form>
         </div>
     );
 }

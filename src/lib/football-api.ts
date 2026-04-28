@@ -5,8 +5,8 @@ const RAPIDAPI_KEY = process.env.RAPIDAPI_KEY;
 const API_SPORTS_KEY = process.env.API_SPORTS_KEY;
 const BASE_URL = "https://v3.football.api-sports.io";
 
-console.log("API_SPORTS_KEY present:", !!API_SPORTS_KEY);
-
+// Flag to avoid repeated API calls when the account is suspended
+let _apiSuspended = false;
 
 function getHeaders() {
     if (API_SPORTS_KEY) {
@@ -123,7 +123,7 @@ export async function getLeagues(): Promise<League[]> {
 
 export async function getFixtures(date?: string): Promise<Match[]> {
     const headers = getHeaders();
-    if (!headers) {
+    if (!headers || _apiSuspended) {
         return [];
     }
 
@@ -132,7 +132,7 @@ export async function getFixtures(date?: string): Promise<Match[]> {
     try {
         const response = await fetch(`${BASE_URL}/fixtures?date=${dateStr}`, {
             headers: headers as any,
-            next: { revalidate: 21600 } // Cache for 6 hours
+            next: { revalidate: 21600 }
         });
 
         if (!response.ok) return [];
@@ -140,7 +140,10 @@ export async function getFixtures(date?: string): Promise<Match[]> {
         const data = await response.json();
 
         if (data.errors && Object.keys(data.errors).length > 0) {
-            console.error("API-Sports Error (getFixtures):", data.errors);
+            const errMsg = JSON.stringify(data.errors);
+            if (errMsg.includes('suspended') || errMsg.includes('access')) {
+                _apiSuspended = true; // Stop hammering a suspended account
+            }
             return [];
         }
 
