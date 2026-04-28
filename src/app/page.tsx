@@ -3,6 +3,7 @@ import { ArrowRight, Trophy, TrendingUp, Calendar, Shield } from "lucide-react";
 import NewsFeed from "@/components/NewsFeed";
 import UpcomingFixtures from "@/components/UpcomingFixtures";
 import BreakingNewsTicker from "@/components/BreakingNewsTicker";
+import PremiumPredictions from "@/components/PremiumPredictions";
 import { prisma } from "@/lib/prisma";
 
 export default async function Home() {
@@ -78,6 +79,27 @@ export default async function Home() {
           </div>
 
           <NewsFeed />
+        </div>
+      </section>
+
+      {/* Premium Predictions Section */}
+      <section className="py-20 bg-zinc-950 border-t border-primary/20">
+        <div className="container mx-auto px-4">
+          <div className="flex flex-col items-center justify-center mb-12 text-center">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/20 border border-primary/50 text-primary font-bold uppercase text-xs tracking-widest mb-4">
+              <span className="w-2 h-2 rounded-full bg-primary animate-pulse"></span> VIP Access
+            </div>
+            <h2 className="text-3xl md:text-4xl font-bold text-white uppercase tracking-tighter">Premium <span className="text-primary">Predictions</span></h2>
+            <p className="text-gray-400 mt-4 max-w-2xl">Unlock our expert-vetted betting tips and increase your winning rate with data-driven analysis.</p>
+          </div>
+
+          <PremiumPredictions />
+          
+          <div className="mt-12 text-center">
+            <Link href="/membership" className="px-8 py-3 bg-primary text-black font-black uppercase tracking-widest rounded-sm hover:bg-yellow-400 transition-all shadow-[0_0_15px_rgba(234,179,8,0.3)] cursor-pointer inline-flex items-center gap-2">
+              Get VIP Access
+            </Link>
+          </div>
         </div>
       </section>
 

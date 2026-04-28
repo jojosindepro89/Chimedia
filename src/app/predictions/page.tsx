@@ -6,7 +6,51 @@ import PredictionsClient from "./PredictionsClient";
 export const dynamic = 'force-dynamic';
 
 export default async function PredictionsPage() {
+    // 1. Fetch AI predictions from external API
     const { free, premium } = await getDailyPredictions();
+
+    // 2. Fetch Admin manual predictions from the database
+    const adminDbPredictions = await prisma.prediction.findMany({
+        where: { status: 'PENDING' },
+        orderBy: { date: 'asc' }
+    });
+
+    const mappedAdminFree: any[] = [];
+    const mappedAdminPremium: any[] = [];
+    let adminBanker: any = null;
+
+    adminDbPredictions.forEach(p => {
+        const tip = {
+            id: p.id,
+            match: p.matchTitle,
+            league: p.league || "Custom",
+            time: new Date(p.date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+            market: p.market,
+            selection: p.selection,
+            odds: p.odds,
+            confidence: p.confidence,
+            analysis: p.analysis,
+            status: p.status,
+            isPremium: p.isPremium,
+            isBanker: p.isBanker
+        };
+
+        if (p.isPremium) {
+            mappedAdminPremium.push(tip);
+        } else {
+            mappedAdminFree.push(tip);
+        }
+
+        if (p.isBanker) {
+            if (!adminBanker || tip.confidence > adminBanker.confidence) {
+                adminBanker = tip;
+            }
+        }
+    });
+
+    // Merge API predictions with Admin predictions (Admin takes precedence by appearing first)
+    const combinedFree = [...mappedAdminFree, ...free];
+    const combinedPremium = [...mappedAdminPremium, ...premium];
 
     // Check real subscription status
     const session = await getSession();
@@ -25,14 +69,14 @@ export default async function PredictionsPage() {
     }
 
     // Find a "Banker" for the Free section (Highest confidence free tip)
-    // Avoid error if free tips are empty
-    const banker = free.length > 0 ? free.reduce((prev, current) => (prev.confidence > current.confidence) ? prev : current) : null;
+    const fallbackBanker = combinedFree.length > 0 ? combinedFree.reduce((prev, current) => (prev.confidence > current.confidence) ? prev : current) : null;
+    const finalBanker = adminBanker || fallbackBanker;
 
     return (
         <PredictionsClient
-            freeTips={free}
-            premiumTips={premium}
-            banker={banker}
+            freeTips={combinedFree}
+            premiumTips={combinedPremium}
+            banker={finalBanker}
             isPremiumMember={isPremiumMember}
         />
     );

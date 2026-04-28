@@ -1,47 +1,37 @@
-import { cookies } from 'next/headers'
-import { redirect } from 'next/navigation'
-import { encrypt, decrypt } from './auth'
-
-export async function createSession(user: { name: string; email: string; role: string }) {
-    const expires = new Date(Date.now() + 24 * 60 * 60 * 1000) // 24 hours
-    const session = await encrypt({ user, expires })
-
-        // Save the session in a cookie
-        ; (await cookies()).set('session', session, { expires, httpOnly: true, sameSite: 'lax', path: '/' })
-}
+import { getServerSession } from "next-auth/next";
+import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+import { redirect } from 'next/navigation';
 
 export async function getSession() {
-    const session = (await cookies()).get('session')?.value
-    if (!session) return null
-    return await decrypt(session)
+    return await getServerSession(authOptions);
 }
 
 export async function verifySession() {
-    const session = (await cookies()).get('session')?.value
-    const payload = await decrypt(session || '')
-
-    if (!session || !payload) {
-        redirect('/login?error=SessionExpired')
+    const session = await getServerSession(authOptions);
+    if (!session) {
+        redirect('/login?error=SessionExpired');
     }
-
-    return payload
+    return session;
 }
 
 export async function verifyAdminSession() {
-    const session = (await cookies()).get('session')?.value
-    const payload = await decrypt(session || '')
-
-    if (!session || !payload) {
-        redirect('/admin/login')
+    const session = await getServerSession(authOptions);
+    
+    if (!session) {
+        redirect('/admin/login');
     }
 
-    if (payload.user?.role !== 'ADMIN') {
-        redirect('/admin/login?error=Unauthorized')
+    if ((session.user as any)?.role !== 'ADMIN') {
+        redirect('/admin/login?error=Unauthorized');
     }
 
-    return payload
+    return session;
 }
 
-export async function deleteSession() {
-    (await cookies()).delete('session')
+// No-ops to satisfy existing code signatures without tearing them all out.
+// NextAuth handles creating and destroying sessions automatically.
+export async function createSession(user: any) { 
+}
+
+export async function deleteSession() { 
 }

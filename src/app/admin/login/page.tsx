@@ -1,22 +1,56 @@
 "use client";
 
-import { useActionState } from "react";
-import { adminLogin } from "@/app/actions";
 import { Lock, User } from "lucide-react";
-
-const initialState = {
-    message: '',
-};
+import { signIn } from "next-auth/react";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 
 export default function AdminLoginPage() {
-    const [state, formAction] = useActionState(adminLogin, initialState);
+    const router = useRouter();
+    const [error, setError] = useState("");
+    const [loading, setLoading] = useState(false);
+
+    const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        setLoading(true);
+        setError("");
+        
+        const formData = new FormData(e.currentTarget);
+        const username = formData.get("username") as string;
+        const password = formData.get("password") as string;
+
+        try {
+            // Added a 10 second timeout so it kills the process if it hangs
+            const timeoutPromise = new Promise((resolve) => setTimeout(() => resolve({ error: 'Timeout' }), 10000));
+            
+            const signInPromise = signIn("credentials", {
+                redirect: false,
+                username,
+                password
+            });
+
+            const res = await Promise.race([signInPromise, timeoutPromise]) as any;
+
+            if (res?.error) {
+                setError(res.error === 'Timeout' ? "Server taking too long. Please try again." : "Invalid credentials. Access denied.");
+                setLoading(false);
+            } else if (res?.ok) {
+                window.location.href = "/admin"; // Hard redirect ensures session is properly initialized
+            } else {
+                setError("Unexpected response from authentication server.");
+                setLoading(false);
+            }
+        } catch (err) {
+            console.error("Login Error:", err);
+            setError("A critical error occurred. Please check console.");
+            setLoading(false);
+        }
+    };
 
     return (
         <div className="min-h-screen bg-black flex items-center justify-center p-4">
             <div className="w-full max-w-md bg-zinc-900 border border-white/10 rounded-sm p-8 shadow-2xl relative overflow-hidden">
-                {/* Decorative Elements */}
                 <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-primary to-transparent" />
-
                 <div className="text-center mb-10">
                     <div className="w-20 h-20 bg-gradient-to-br from-zinc-800 to-black rounded-full flex items-center justify-center mx-auto mb-6 border border-primary/20 shadow-lg shadow-primary/10">
                         <Lock className="w-8 h-8 text-primary" />
@@ -27,50 +61,34 @@ export default function AdminLoginPage() {
                     <h1 className="text-3xl font-bold text-white uppercase tracking-wider mb-2">cmhsports<span className="text-primary">.Admin</span></h1>
                     <p className="text-gray-500 text-sm">Enter your credentials to access the control panel.</p>
                 </div>
-
-                <form action={formAction} className="space-y-6">
+                
+                <form onSubmit={handleLogin} className="space-y-6">
                     <div>
                         <label className="block text-xs uppercase font-bold text-gray-500 mb-2">Username</label>
                         <div className="relative">
                             <User className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" />
-                            <input
-                                name="username"
-                                type="text"
-                                className="w-full bg-black/50 border border-white/10 rounded px-12 py-3 text-white focus:outline-none focus:border-primary transition-colors"
-                                placeholder="Enter admin username"
-                                required
-                            />
+                            <input name="username" type="text" className="w-full bg-black/50 border border-white/10 rounded px-12 py-3 text-white focus:outline-none focus:border-primary transition-colors" placeholder="Enter admin username" required />
                         </div>
                     </div>
-
                     <div>
                         <label className="block text-xs uppercase font-bold text-gray-500 mb-2">Password</label>
                         <div className="relative">
                             <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" />
-                            <input
-                                name="password"
-                                type="password"
-                                className="w-full bg-black/50 border border-white/10 rounded px-12 py-3 text-white focus:outline-none focus:border-primary transition-colors"
-                                placeholder="Enter secure password"
-                                required
-                            />
+                            <input name="password" type="password" className="w-full bg-black/50 border border-white/10 rounded px-12 py-3 text-white focus:outline-none focus:border-primary transition-colors" placeholder="Enter secure password" required />
                         </div>
                     </div>
-
-                    {state?.message && (
+                    
+                    {error && (
                         <div className="bg-red-500/10 border border-red-500/20 text-red-500 text-sm font-bold p-3 rounded text-center">
-                            {state.message}
+                            {error}
                         </div>
                     )}
-
-                    <button
-                        type="submit"
-                        className="w-full bg-primary text-black font-bold uppercase py-4 rounded hover:bg-yellow-500 transition-colors shadow-lg shadow-primary/20"
-                    >
-                        Authenticate
+                    
+                    <button type="submit" disabled={loading} className="w-full bg-primary text-black font-bold uppercase py-4 rounded hover:bg-yellow-500 transition-colors shadow-lg shadow-primary/20 disabled:opacity-50">
+                        {loading ? "Authenticating..." : "Authenticate"}
                     </button>
-
-                    <div className="text-center">
+                    
+                    <div className="text-center mt-6">
                         <a href="/" className="text-gray-500 text-xs hover:text-white transition-colors">Return to Website</a>
                     </div>
                 </form>

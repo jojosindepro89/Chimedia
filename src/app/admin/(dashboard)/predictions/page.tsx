@@ -4,11 +4,12 @@ import { prisma } from "@/lib/prisma";
 import { deletePrediction } from "@/app/actions";
 import clsx from "clsx";
 
-const predictions = await prisma.prediction.findMany({
-    orderBy: { createdAt: 'desc' }
-});
+export const dynamic = 'force-dynamic';
 
 export default async function AdminPredictionsPage() {
+    const predictions = await prisma.prediction.findMany({
+        orderBy: { createdAt: 'desc' }
+    });
     return (
         <div>
             <div className="flex items-center justify-between mb-8">

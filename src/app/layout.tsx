@@ -3,6 +3,7 @@ import { Inter, Oswald } from "next/font/google";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import { CartProvider } from "@/components/providers/CartProvider";
+import AuthProvider from "@/components/providers/AuthProvider";
 import "./globals.css";
 
 const inter = Inter({
@@ -30,13 +31,15 @@ export default function RootLayout({
       <body
         className={`${inter.variable} ${oswald.variable} antialiased bg-black text-white`}
       >
-        <CartProvider>
-          <Navbar />
-          <main className="min-h-screen pt-[72px]">
-            {children}
-          </main>
-          <Footer />
-        </CartProvider>
+        <AuthProvider>
+          <CartProvider>
+            <Navbar />
+            <main className="min-h-screen pt-[72px]">
+              {children}
+            </main>
+            <Footer />
+          </CartProvider>
+        </AuthProvider>
       </body>
     </html>
   );

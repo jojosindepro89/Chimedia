@@ -11,6 +11,8 @@ import path from 'path'
 // Helper: Upload Image (Cloudinary)
 import { uploadToCloudinary } from '@/lib/cloudinary'
 import { createSession, deleteSession, verifyAdminSession } from '@/lib/session'
+import { sendMail } from '@/lib/mail'
+import crypto from 'crypto'
 
 async function uploadImage(file: File): Promise<string | null> {
     if (!file || file.size === 0) return null
@@ -321,52 +323,8 @@ export async function toggleUserRole(id: string) {
 }
 
 // --- AUTH ---
-export async function adminLogin(prevState: any, formData: FormData) {
-    const username = formData.get('username') as string // This might be email in form? Let's check.
-    const password = formData.get('password') as string
-
-    // 1. Check if it's the legacy hardcoded admin (for emergency fallback if needed, or remove)
-    // REMOVING legacy check to enforce DB auth as requested.
-
-    try {
-        // 2. Find user by email (assuming username field is actually email, or we check both)
-        // The form uses "username" name attribute but placeholder says "username".
-        // Let's assume it's email for now or username. 
-        // If the Model only has email, we use email.
-        const user = await prisma.user.findFirst({
-            where: {
-                OR: [
-                    { email: username },
-                    { name: username }
-                ]
-            }
-        })
-
-        if (!user || user.role !== 'ADMIN') {
-            return { message: 'Invalid credentials. Access denied.' }
-        }
-
-        // 3. Verify password
-        // If user has no password (e.g. OAuth), they can't login via credentials form
-        if (!user.password) {
-            return { message: 'Invalid credentials.' }
-        }
-
-        const isValid = await bcrypt.compare(password, user.password)
-
-        if (!isValid) {
-            return { message: 'Invalid credentials.' }
-        }
-
-        // 4. Create Session
-        await createSession({ name: user.name || 'Admin', email: user.email || '', role: 'ADMIN' })
-
-    } catch (error) {
-        console.error("Login error:", error)
-        return { message: 'An error occurred during login.' }
-    }
-
-    redirect('/admin')
+export async function adminLogin() {
+    // NextAuth completely handles this now via signIn('credentials')
 }
 
 export async function createFirstAdmin(prevState: any, formData: FormData) {
@@ -375,22 +333,20 @@ export async function createFirstAdmin(prevState: any, formData: FormData) {
     const password = formData.get('password') as string
     const secretKey = formData.get('secretKey') as string
 
-    // Security: Only allow if NO admins exist OR if secret key matches env
-    const adminCount = await prisma.user.count({ where: { role: 'ADMIN' } })
-
-    // Allow creation if 0 admins. If admins exist, require secret key.
-    // TEMPORARY: Allow multiple admins for setup debugging
-    // if (adminCount > 0 && secretKey !== process.env.ADMIN_SETUP_SECRET) {
-    //    return { message: 'Unauthorized. Admins already exist.' }
-    // }
-
     if (!email || !password || password.length < 6) {
-        return { message: 'Invalid data. Password must be at least 6 chars.' }
+        return { message: 'Invalid data. Password must be at least 6 characters.' }
+    }
+
+    // Security: If any admin already exists, require the setup secret key
+    const adminCount = await prisma.user.count({ where: { role: 'ADMIN' } })
+    if (adminCount > 0) {
+        if (!secretKey || secretKey !== process.env.ADMIN_SETUP_SECRET) {
+            return { message: 'An admin account already exists. Provide the correct Setup Secret Key to add another.' }
+        }
     }
 
     try {
         const hashedPassword = await bcrypt.hash(password, 10)
-
         await prisma.user.create({
             data: {
                 name,
@@ -399,9 +355,12 @@ export async function createFirstAdmin(prevState: any, formData: FormData) {
                 role: 'ADMIN'
             }
         })
-    } catch (e) {
+    } catch (e: any) {
         console.error(e)
-        return { message: 'Failed to create admin. Email might be registered already.' }
+        if (e?.code === 'P2002') {
+            return { message: 'An account with this email already exists.' }
+        }
+        return { message: 'Failed to create admin account. Please try again.' }
     }
 
     redirect('/admin/login')
@@ -410,4 +369,126 @@ export async function createFirstAdmin(prevState: any, formData: FormData) {
 export async function adminLogout() {
     await deleteSession()
     redirect('/admin/login')
+}
+
+// --- PASSWORD RESET ---
+export async function requestPasswordReset(prevState: any, formData: FormData) {
+    const email = formData.get('email') as string;
+    if (!email) return { message: 'Email is required' };
+
+    const user = await prisma.user.findUnique({ where: { email } });
+    if (!user) {
+        // Obscure for security to avoid email harvesting
+        return { message: 'If that email is in our system, a reset link has been sent.', success: true };
+    }
+
+    const token = crypto.randomBytes(32).toString('hex');
+    const expiresAt = new Date(Date.now() + 1000 * 60 * 60); // 1 hour expiration
+
+    // Check if a token already exists and delete to replace
+    await prisma.passwordResetToken.deleteMany({ where: { email } });
+
+    await prisma.passwordResetToken.create({
+        data: {
+            email,
+            token,
+            expiresAt
+        }
+    });
+
+    const resetLink = `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/login/reset-password?token=${token}`;
+
+    await sendMail({
+        to: email,
+        subject: "Reset your CMHSports Password",
+        text: `You recently requested a password reset for your CMHSports account.\n\nPlease go to the following secure link to reset it:\n${resetLink}\n\nThis link will expire in 1 hour.`
+    });
+
+    return { message: 'If that email is in our system, a reset link has been sent.', success: true };
+}
+
+export async function resetPassword(prevState: any, formData: FormData) {
+    const token = formData.get('token') as string;
+    const password = formData.get('password') as string;
+
+    if (!token || !password || password.length < 6) {
+        return { message: 'Invalid data. Password must be at least 6 characters.' };
+    }
+
+    const resetToken = await prisma.passwordResetToken.findUnique({
+        where: { token }
+    });
+
+    if (!resetToken || resetToken.expiresAt < new Date()) {
+        return { message: 'Invalid or expired reset token.' };
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    // Update the actual user password
+    await prisma.user.update({
+        where: { email: resetToken.email },
+        data: { password: hashedPassword }
+    });
+
+    // Delete token once used securely
+    await prisma.passwordResetToken.delete({
+        where: { id: resetToken.id }
+    });
+
+    return { message: 'Password reset successfully. You can now login.', success: true };
+}
+
+export async function updateAdminPassword(prevState: any, formData: FormData) {
+    const session = await verifyAdminSession();
+    const email = session.user?.email;
+    
+    if (!email) {
+        return { message: 'Unauthorized' };
+    }
+
+    const currentPassword = formData.get('currentPassword') as string;
+    const newPassword = formData.get('newPassword') as string;
+    const confirmPassword = formData.get('confirmPassword') as string;
+
+    if (!currentPassword || !newPassword || !confirmPassword) {
+        return { message: 'All fields are required.' };
+    }
+
+    if (newPassword !== confirmPassword) {
+        return { message: 'New passwords do not match.' };
+    }
+
+    if (newPassword.length < 6) {
+        return { message: 'New password must be at least 6 characters long.' };
+    }
+
+    const user = await prisma.user.findUnique({ where: { email } });
+    if (!user || !user.password) {
+        return { message: 'User not found or invalid.' };
+    }
+
+    const isValid = await bcrypt.compare(currentPassword, user.password);
+    if (!isValid) {
+        return { message: 'Current password is incorrect.' };
+    }
+
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+    await prisma.user.update({
+        where: { email },
+        data: { password: hashedPassword }
+    });
+
+    try {
+        await sendMail({
+            to: email,
+            subject: "Security Alert: Your Admin Password Was Changed",
+            text: `Hello ${user.name || 'Admin'},\n\nYour CMHSports admin password was just changed successfully.\n\nIf you did not make this change, please contact support immediately or reset your password.\n\nBest regards,\nCMHSports Team`
+        });
+    } catch (error) {
+        console.error("Failed to send password change notification:", error);
+    }
+
+    return { message: 'Password changed successfully! Check your email for confirmation.', success: true };
 }

@@ -1,67 +1,65 @@
 import Link from "next/link";
-import { LayoutDashboard, FileText, Trophy, Users, ShoppingBag, Settings, LogOut } from "lucide-react";
-
+import { LogOut } from "lucide-react";
 import { verifyAdminSession } from "@/lib/session";
 import { adminLogout } from "@/app/actions";
+import AdminNav from "@/components/admin/SidebarLink";
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
     const session = await verifyAdminSession();
     const user = session?.user;
+    const initial = (user?.name?.charAt(0) || user?.email?.charAt(0) || "A").toUpperCase();
+
     return (
-        <div className="flex h-screen bg-black text-white">
+        <div className="flex h-screen bg-[#0a0a0a] text-white overflow-hidden">
             {/* Sidebar */}
-            <aside className="w-64 bg-zinc-900 border-r border-white/10 flex flex-col">
-                <div className="p-6 border-b border-white/10">
-                    <Link href="/" className="text-xl font-bold tracking-tighter uppercase block">
-                        <span className="text-white">cmhsports</span>
-                        <span className="text-primary ml-1">Admin</span>
-                    </Link>
-                    <div className="mt-4 flex items-center gap-3">
-                        <div className="w-10 h-10 bg-zinc-800 rounded-full flex items-center justify-center font-bold text-gray-500 border border-white/10">
-                            {user?.name?.charAt(0) || 'A'}
+            <aside className="w-64 shrink-0 flex flex-col bg-[#111111] border-r border-white/[0.06]">
+                {/* Logo */}
+                <div className="px-6 py-5 border-b border-white/[0.06]">
+                    <Link href="/" className="flex items-center gap-2.5 group">
+                        <div className="w-8 h-8 bg-primary rounded-sm flex items-center justify-center shrink-0 shadow-lg shadow-primary/30 group-hover:shadow-primary/50 transition-shadow">
+                            <span className="text-black font-black text-sm">C</span>
                         </div>
                         <div>
-                            <div className="text-white font-bold text-sm">{user?.name || 'Admin'}</div>
-                            <div className="text-gray-500 text-xs">{user?.email || 'admin@cmhsports.com'}</div>
+                            <span className="font-black uppercase tracking-tight text-white text-sm block leading-tight">cmhsports</span>
+                            <span className="text-[10px] text-gray-500 uppercase tracking-widest font-medium">Admin Panel</span>
                         </div>
+                    </Link>
+                </div>
+
+                {/* Profile chip */}
+                <div className="px-4 py-4 border-b border-white/[0.06]">
+                    <div className="flex items-center gap-3 bg-white/[0.04] rounded-lg p-3">
+                        <div className="w-9 h-9 bg-gradient-to-br from-primary to-yellow-700 rounded-lg flex items-center justify-center font-black text-black text-sm shrink-0 shadow-lg shadow-primary/20">
+                            {initial}
+                        </div>
+                        <div className="min-w-0 flex-1">
+                            <div className="text-white font-bold text-sm truncate">{user?.name || "Admin"}</div>
+                            <div className="text-gray-500 text-[11px] truncate">{user?.email || ""}</div>
+                        </div>
+                        <span className="w-2 h-2 bg-green-500 rounded-full shrink-0 ring-2 ring-green-500/20"></span>
                     </div>
                 </div>
 
-                <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
-                    <AdminLink href="/admin" icon={<LayoutDashboard size={20} />} label="Overview" active />
-                    <AdminLink href="/admin/posts" icon={<FileText size={20} />} label="Posts" />
-                    <AdminLink href="/admin/predictions" icon={<Trophy size={20} />} label="Predictions" />
-                    <AdminLink href="/admin/fixtures" icon={<Trophy size={20} />} label="Fixtures" />
-                    <AdminLink href="/admin/api-config" icon={<Settings size={20} />} label="API Config" />
-                    <AdminLink href="/admin/shop" icon={<ShoppingBag size={20} />} label="Shop Products" />
-                    <AdminLink href="/admin/orders" icon={<ShoppingBag size={20} />} label="Orders" />
-                    <AdminLink href="/admin/members" icon={<Users size={20} />} label="Members" />
-                    <AdminLink href="/admin/settings" icon={<Settings size={20} />} label="Site Settings" />
-                </nav>
+                {/* Nav links */}
+                <AdminNav />
 
-                <div className="p-4 border-t border-white/10">
+                {/* Logout */}
+                <div className="px-3 py-4 border-t border-white/[0.06]">
                     <form action={adminLogout}>
-                        <button className="flex items-center gap-3 text-red-500 hover:text-red-400 transition-colors w-full px-4 py-2 opacity-80 hover:opacity-100">
-                            <LogOut size={20} />
-                            <span className="font-bold uppercase text-sm">Logout</span>
+                        <button className="flex items-center gap-3 w-full px-3 py-2.5 rounded-lg text-gray-500 hover:text-red-400 hover:bg-red-500/[0.08] transition-all group border border-transparent hover:border-red-500/20">
+                            <LogOut size={16} className="group-hover:scale-110 transition-transform shrink-0" />
+                            <span className="text-sm font-bold uppercase tracking-wide">Logout</span>
                         </button>
                     </form>
                 </div>
             </aside>
 
             {/* Main Content */}
-            <main className="flex-1 overflow-y-auto bg-black p-8">
-                {children}
+            <main className="flex-1 overflow-y-auto">
+                <div className="p-8">
+                    {children}
+                </div>
             </main>
         </div>
     );
-}
-
-function AdminLink({ href, icon, label, active = false }: any) {
-    return (
-        <Link href={href} className={`flex items-center gap-3 px-4 py-3 rounded-sm transition-colors ${active ? "bg-primary text-black font-bold" : "text-gray-400 hover:bg-white/5 hover:text-white"}`}>
-            {icon}
-            <span className="text-sm uppercase tracking-wide font-medium">{label}</span>
-        </Link>
-    )
 }

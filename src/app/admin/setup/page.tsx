@@ -1,89 +1,163 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useState } from "react";
 import { createFirstAdmin } from "@/app/actions";
-import { Lock, User, Mail, ShieldAlert } from "lucide-react";
+import { Lock, User, Mail, ShieldAlert, Eye, EyeOff, CheckCircle, Key } from "lucide-react";
+import Link from "next/link";
 
-const initialState = {
-    message: '',
-};
+const initialState = { message: '', success: false };
 
 export default function AdminSetupPage() {
-    const [state, formAction] = useActionState(createFirstAdmin, initialState);
+    const [state, formAction, isPending] = useActionState(createFirstAdmin, initialState);
+    const [showPassword, setShowPassword] = useState(false);
+    const [showSecret, setShowSecret] = useState(false);
 
     return (
-        <div className="min-h-screen bg-black flex items-center justify-center p-4">
-            <div className="w-full max-w-md bg-zinc-900 border border-yellow-500/20 rounded-sm p-8 shadow-2xl relative overflow-hidden">
+        <div className="min-h-screen bg-[#0a0a0a] flex items-center justify-center p-4 relative overflow-hidden">
+            {/* Background glow */}
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-primary/5 rounded-full blur-3xl pointer-events-none" />
+
+            <div className="w-full max-w-lg relative">
+                {/* Header */}
                 <div className="text-center mb-8">
-                    <div className="w-16 h-16 bg-yellow-500/10 rounded-full flex items-center justify-center mx-auto mb-4 border border-yellow-500/20">
-                        <ShieldAlert className="w-8 h-8 text-yellow-500" />
-                    </div>
-                    <h1 className="text-2xl font-bold text-white uppercase tracking-wider">Admin Setup</h1>
-                    <p className="text-gray-500 text-sm mt-2">Create your first Administrator account.</p>
+                    <Link href="/" className="inline-flex items-center gap-2 mb-8 group">
+                        <div className="w-9 h-9 bg-primary rounded-lg flex items-center justify-center shadow-lg shadow-primary/30">
+                            <span className="text-black font-black text-base">C</span>
+                        </div>
+                        <span className="font-black uppercase tracking-tight text-white text-lg">cmhsports</span>
+                    </Link>
                 </div>
 
-                <form action={formAction} className="space-y-6">
-                    <div>
-                        <label className="block text-xs uppercase font-bold text-gray-500 mb-2">Full Name</label>
-                        <div className="relative">
-                            <User className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" />
-                            <input
-                                name="name"
-                                type="text"
-                                className="w-full bg-black/50 border border-white/10 rounded px-12 py-3 text-white focus:outline-none focus:border-yellow-500 transition-colors"
-                                placeholder="Admin Name"
-                                required
-                            />
+                <div className="bg-[#111111] border border-white/[0.08] rounded-2xl p-8 shadow-2xl">
+                    {/* Icon + Title */}
+                    <div className="flex items-center gap-4 mb-8 pb-6 border-b border-white/[0.06]">
+                        <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center border border-primary/20 shrink-0">
+                            <ShieldAlert className="w-6 h-6 text-primary" />
+                        </div>
+                        <div>
+                            <h1 className="text-xl font-black text-white uppercase tracking-wider">Admin Setup</h1>
+                            <p className="text-gray-500 text-sm mt-0.5">Create an administrator account for the control panel.</p>
                         </div>
                     </div>
 
-                    <div>
-                        <label className="block text-xs uppercase font-bold text-gray-500 mb-2">Email (Login Username)</label>
-                        <div className="relative">
-                            <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" />
-                            <input
-                                name="email"
-                                type="email"
-                                className="w-full bg-black/50 border border-white/10 rounded px-12 py-3 text-white focus:outline-none focus:border-yellow-500 transition-colors"
-                                placeholder="admin@domain.com"
-                                required
-                            />
+                    {/* Security notice */}
+                    <div className="flex items-start gap-3 bg-yellow-500/[0.06] border border-yellow-500/20 rounded-xl p-4 mb-6">
+                        <Key className="w-4 h-4 text-yellow-500 shrink-0 mt-0.5" />
+                        <div className="text-xs text-yellow-500/80 leading-relaxed">
+                            <span className="font-bold text-yellow-500 block mb-0.5">Secret key required</span>
+                            If an admin account already exists, you must provide the <code className="bg-white/10 px-1 rounded font-mono">ADMIN_SETUP_SECRET</code> from your environment variables to create additional admins.
                         </div>
                     </div>
 
-                    <div>
-                        <label className="block text-xs uppercase font-bold text-gray-500 mb-2">Password</label>
-                        <div className="relative">
-                            <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" />
-                            <input
-                                name="password"
-                                type="password"
-                                className="w-full bg-black/50 border border-white/10 rounded px-12 py-3 text-white focus:outline-none focus:border-yellow-500 transition-colors"
-                                placeholder="Strong Password"
-                                required
-                                minLength={6}
-                            />
+                    <form action={formAction} className="space-y-5">
+                        {/* Full Name */}
+                        <div>
+                            <label className="block text-xs uppercase font-bold text-gray-500 mb-2 tracking-wider">Full Name</label>
+                            <div className="relative">
+                                <User className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-600" />
+                                <input
+                                    name="name"
+                                    type="text"
+                                    required
+                                    className="w-full bg-black/40 border border-white/[0.08] rounded-xl pl-11 pr-4 py-3 text-white text-sm focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/20 transition-all placeholder-gray-700"
+                                    placeholder="Joseph Bassey"
+                                />
+                            </div>
                         </div>
-                    </div>
 
-                    {/* Optional Secret Key field - hidden by default unless needed, 
-                        but good to have if user wants to add more admins later via this page 
-                        if we enable it. For now, strict "First Admin" flow doesn't strictly need it 
-                        if DB check passes. */}
-
-                    {state?.message && (
-                        <div className="bg-red-500/10 border border-red-500/20 text-red-500 text-sm font-bold p-3 rounded text-center">
-                            {state.message}
+                        {/* Email */}
+                        <div>
+                            <label className="block text-xs uppercase font-bold text-gray-500 mb-2 tracking-wider">Email Address</label>
+                            <div className="relative">
+                                <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-600" />
+                                <input
+                                    name="email"
+                                    type="email"
+                                    required
+                                    className="w-full bg-black/40 border border-white/[0.08] rounded-xl pl-11 pr-4 py-3 text-white text-sm focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/20 transition-all placeholder-gray-700"
+                                    placeholder="admin@cmhsports.com"
+                                />
+                            </div>
                         </div>
-                    )}
 
-                    <button
-                        type="submit"
-                        className="w-full bg-yellow-500 text-black font-bold uppercase py-4 rounded hover:bg-yellow-400 transition-colors shadow-lg shadow-yellow-500/20"
-                    >
-                        Create Admin Account
-                    </button>
-                </form>
+                        {/* Password */}
+                        <div>
+                            <label className="block text-xs uppercase font-bold text-gray-500 mb-2 tracking-wider">Password</label>
+                            <div className="relative">
+                                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-600" />
+                                <input
+                                    name="password"
+                                    type={showPassword ? "text" : "password"}
+                                    required
+                                    minLength={6}
+                                    className="w-full bg-black/40 border border-white/[0.08] rounded-xl pl-11 pr-12 py-3 text-white text-sm focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/20 transition-all placeholder-gray-700"
+                                    placeholder="At least 6 characters"
+                                />
+                                <button
+                                    type="button"
+                                    onClick={() => setShowPassword(v => !v)}
+                                    className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-600 hover:text-gray-400 transition-colors"
+                                >
+                                    {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                                </button>
+                            </div>
+                        </div>
+
+                        {/* Secret Key */}
+                        <div>
+                            <label className="block text-xs uppercase font-bold text-gray-500 mb-2 tracking-wider">
+                                Setup Secret Key <span className="text-gray-700 normal-case font-normal">(required if admin exists)</span>
+                            </label>
+                            <div className="relative">
+                                <Key className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-600" />
+                                <input
+                                    name="secretKey"
+                                    type={showSecret ? "text" : "password"}
+                                    className="w-full bg-black/40 border border-white/[0.08] rounded-xl pl-11 pr-12 py-3 text-white text-sm focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/20 transition-all placeholder-gray-700"
+                                    placeholder="ADMIN_SETUP_SECRET value"
+                                />
+                                <button
+                                    type="button"
+                                    onClick={() => setShowSecret(v => !v)}
+                                    className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-600 hover:text-gray-400 transition-colors"
+                                >
+                                    {showSecret ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                                </button>
+                            </div>
+                        </div>
+
+                        {/* Error / Success */}
+                        {state?.message && (
+                            <div className={`flex items-start gap-3 p-4 rounded-xl text-sm font-medium border ${
+                                state.success
+                                    ? 'bg-green-500/10 border-green-500/20 text-green-400'
+                                    : 'bg-red-500/10 border-red-500/20 text-red-400'
+                            }`}>
+                                {state.success && <CheckCircle className="w-4 h-4 shrink-0 mt-0.5" />}
+                                {state.message}
+                            </div>
+                        )}
+
+                        {/* Submit */}
+                        <button
+                            type="submit"
+                            disabled={isPending}
+                            className="w-full bg-primary text-black font-black uppercase py-3.5 rounded-xl hover:bg-yellow-400 transition-all shadow-lg shadow-primary/20 hover:shadow-primary/40 disabled:opacity-50 disabled:cursor-not-allowed text-sm tracking-wider mt-2"
+                        >
+                            {isPending ? "Creating Account..." : "Create Admin Account"}
+                        </button>
+
+                        <div className="text-center pt-2">
+                            <Link href="/admin/login" className="text-gray-600 text-xs hover:text-gray-400 transition-colors">
+                                Already have an account? Sign in →
+                            </Link>
+                        </div>
+                    </form>
+                </div>
+
+                <p className="text-center text-gray-700 text-xs mt-6">
+                    This page should be protected or removed after initial setup.
+                </p>
             </div>
         </div>
     );
