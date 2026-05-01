@@ -107,7 +107,7 @@ export default function ReturnPolicyPage() {
                         <div className="space-y-4 text-gray-300">
                             <p>To initiate a return or refund request, please follow these steps:</p>
                             <ol className="list-decimal ml-6 space-y-2">
-                                <li>Email our support team at <a href="mailto:support@cmhsports.com" className="text-primary hover:underline">support@cmhsports.com</a>.</li>
+                                <li>Email our support team at <a href="mailto:Chigoziemedia@gmail.com" className="text-primary hover:underline">Chigoziemedia@gmail.com</a>.</li>
                                 <li>Include your <strong>Order ID</strong> and the reason for the return.</li>
                                 <li>For physical items, please attach photos if there is damage.</li>
                             </ol>

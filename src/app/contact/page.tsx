@@ -53,7 +53,7 @@ export default function ContactPage() {
                         <div>
                             <h3 className="text-xl font-bold text-white uppercase mb-2">Email Us</h3>
                             <p className="text-gray-400 mb-2">For general inquiries and support.</p>
-                            <a href="mailto:support@cmhsports.com" className="text-primary font-bold hover:underline">support@cmhsports.com</a>
+                            <a href="mailto:Chigoziemedia@gmail.com" className="text-primary font-bold hover:underline">Chigoziemedia@gmail.com</a>
                         </div>
                     </div>
 
@@ -64,7 +64,7 @@ export default function ContactPage() {
                         <div>
                             <h3 className="text-xl font-bold text-white uppercase mb-2">Call Us</h3>
                             <p className="text-gray-400 mb-2">Mon-Fri from 9am to 6pm GMT.</p>
-                            <a href="tel:+1234567890" className="text-primary font-bold hover:underline">+234 (0) 123 456 7890</a>
+                            <a href="tel:09134158509" className="text-primary font-bold hover:underline">09134158509</a>
                         </div>
                     </div>
 

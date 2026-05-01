@@ -30,7 +30,7 @@ export default function AdminSettingsPage() {
 
                         <div>
                             <label className="block text-xs uppercase font-bold text-gray-500 mb-2">Contact Email</label>
-                            <input type="email" defaultValue="support@cmhsports.com" className="w-full bg-black/50 border border-white/10 rounded px-4 py-3 text-white focus:outline-none focus:border-primary transition-colors" />
+                            <input type="email" defaultValue="Chigoziemedia@gmail.com" className="w-full bg-black/50 border border-white/10 rounded px-4 py-3 text-white focus:outline-none focus:border-primary transition-colors" />
                         </div>
 
                         <div className="pt-4 border-t border-white/10">

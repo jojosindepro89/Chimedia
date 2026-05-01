@@ -88,7 +88,7 @@ export default function TermsPage() {
                             <h2 className="text-xl font-semibold text-white mb-3">10. Contact Information</h2>
                             <p>
                                 For any questions regarding these Terms of Service, please contact us at: <br />
-                                <a href="mailto:support@cmhsports.com" className="text-primary hover:underline">support@cmhsports.com</a>
+                                <a href="mailto:Chigoziemedia@gmail.com" className="text-primary hover:underline">Chigoziemedia@gmail.com</a>
                             </p>
                         </section>
                     </div>
