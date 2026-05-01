@@ -17,6 +17,7 @@ const navLinks = [
     { name: "Watch Live", href: "/live" },
     { name: "Shop", href: "/shop" },
     { name: "Membership", href: "/membership" },
+    { name: "Contact Us", href: "/contact" },
 ];
 
 export default function Navbar() {
