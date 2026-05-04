@@ -1,6 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
-import { Facebook, Twitter, Instagram, Youtube, Mail } from "lucide-react";
+import { Facebook, Twitter, Instagram, Youtube, Mail, Phone } from "lucide-react";
 
 export default function Footer() {
     return (
@@ -36,15 +36,25 @@ export default function Footer() {
                         </ul>
                     </div>
 
-                    {/* Support */}
+                    {/* Support & Contact */}
                     <div>
-                        <h3 className="text-primary font-bold uppercase tracking-wider mb-6">Support</h3>
-                        <ul className="space-y-3">
+                        <h3 className="text-primary font-bold uppercase tracking-wider mb-6">Support & Contact</h3>
+                        <ul className="space-y-3 mb-6">
                             <FooterLink href="/contact" label="Contact Us" />
                             <FooterLink href="/return-policy" label="Return Policy" />
                             <FooterLink href="/terms" label="Terms of Service" />
                             <FooterLink href="/privacy" label="Privacy Policy" />
                         </ul>
+                        <div className="space-y-3">
+                            <a href="mailto:Chigoziemedia@gmail.com" className="flex items-center gap-3 text-gray-400 hover:text-white transition-colors text-sm">
+                                <Mail className="w-4 h-4 text-primary" />
+                                Chigoziemedia@gmail.com
+                            </a>
+                            <a href="tel:09134158509" className="flex items-center gap-3 text-gray-400 hover:text-white transition-colors text-sm">
+                                <Phone className="w-4 h-4 text-primary" />
+                                09134158509
+                            </a>
+                        </div>
                     </div>
 
                     {/* Newsletter */}

@@ -6,7 +6,8 @@ export default async function PremiumPredictions() {
     const premiumPredictions = await prisma.prediction.findMany({
         where: { isPremium: true },
         orderBy: { date: 'desc' },
-        take: 3
+        take: 3,
+        include: { fixture: true }
     });
 
     if (premiumPredictions.length === 0) {

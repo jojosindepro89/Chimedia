@@ -334,14 +334,14 @@ export async function createFirstAdmin(prevState: any, formData: FormData) {
     const secretKey = formData.get('secretKey') as string
 
     if (!email || !password || password.length < 6) {
-        return { message: 'Invalid data. Password must be at least 6 characters.' }
+        return { message: 'Invalid data. Password must be at least 6 characters.', success: false }
     }
 
     // Security: If any admin already exists, require the setup secret key
     const adminCount = await prisma.user.count({ where: { role: 'ADMIN' } })
     if (adminCount > 0) {
         if (!secretKey || secretKey !== process.env.ADMIN_SETUP_SECRET) {
-            return { message: 'An admin account already exists. Provide the correct Setup Secret Key to add another.' }
+            return { message: 'An admin account already exists. Provide the correct Setup Secret Key to add another.', success: false }
         }
     }
 
@@ -358,9 +358,9 @@ export async function createFirstAdmin(prevState: any, formData: FormData) {
     } catch (e: any) {
         console.error(e)
         if (e?.code === 'P2002') {
-            return { message: 'An account with this email already exists.' }
+            return { message: 'An account with this email already exists.', success: false }
         }
-        return { message: 'Failed to create admin account. Please try again.' }
+        return { message: 'Failed to create admin account. Please try again.', success: false }
     }
 
     redirect('/admin/login')
