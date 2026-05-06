@@ -4,6 +4,7 @@ import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import { CartProvider } from "@/components/providers/CartProvider";
 import AuthProvider from "@/components/providers/AuthProvider";
+import PublicLayoutWrapper from "@/components/layout/PublicLayoutWrapper";
 import "./globals.css";
 
 const inter = Inter({
@@ -33,11 +34,9 @@ export default function RootLayout({
       >
         <AuthProvider>
           <CartProvider>
-            <Navbar />
-            <main className="min-h-screen pt-[72px]">
+            <PublicLayoutWrapper>
               {children}
-            </main>
-            <Footer />
+            </PublicLayoutWrapper>
           </CartProvider>
         </AuthProvider>
       </body>
