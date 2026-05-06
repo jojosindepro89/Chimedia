@@ -41,13 +41,21 @@ export const authOptions: NextAuthOptions = {
         async jwt({ token, user }) {
             if (user) {
                 token.id = user.id;
+                // Store role in JWT at login time so we don't need a DB call on every request
+                token.role = (user as any).role || 'USER';
             }
             
-            // Fetch fresh role from DB
-            if (token.email) {
-                const dbUser = await prisma.user.findUnique({ where: { email: token.email }});
-                if (dbUser) {
-                    token.role = dbUser.role;
+            // Refresh role from DB on subsequent requests — with fault tolerance
+            // This allows role changes to take effect without re-login
+            if (!user && token.email) {
+                try {
+                    const dbUser = await prisma.user.findUnique({ where: { email: token.email }});
+                    if (dbUser) {
+                        token.role = dbUser.role;
+                    }
+                } catch (e) {
+                    console.error('[NextAuth] Failed to fetch user role from DB:', e);
+                    // Keep whatever role is already in the token
                 }
             }
             return token;
