@@ -39,25 +39,13 @@ export const authOptions: NextAuthOptions = {
     },
     callbacks: {
         async jwt({ token, user }) {
+            // Store role and id in JWT at login time from the user object
             if (user) {
                 token.id = user.id;
-                // Store role in JWT at login time so we don't need a DB call on every request
                 token.role = (user as any).role || 'USER';
             }
-            
-            // Refresh role from DB on subsequent requests — with fault tolerance
-            // This allows role changes to take effect without re-login
-            if (!user && token.email) {
-                try {
-                    const dbUser = await prisma.user.findUnique({ where: { email: token.email }});
-                    if (dbUser) {
-                        token.role = dbUser.role;
-                    }
-                } catch (e) {
-                    console.error('[NextAuth] Failed to fetch user role from DB:', e);
-                    // Keep whatever role is already in the token
-                }
-            }
+            // No DB call here — role is embedded in the JWT at login time
+            // This prevents DB connectivity issues from crashing the admin dashboard
             return token;
         },
         async session({ session, token }) {
@@ -72,7 +60,6 @@ export const authOptions: NextAuthOptions = {
         signIn: '/login',
     },
     secret: process.env.NEXTAUTH_SECRET,
-    // Custom decode removed to prevent hanging during authentication
 };
 
 const handler = NextAuth(authOptions);

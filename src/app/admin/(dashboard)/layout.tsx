@@ -4,11 +4,18 @@ import { verifyAdminSession } from "@/lib/session";
 import { adminLogout } from "@/app/actions";
 import AdminNav from "@/components/admin/SidebarLink";
 
+import { redirect } from 'next/navigation';
+
 export const dynamic = 'force-dynamic';
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
     const session = await verifyAdminSession();
-    const user = session?.user;
+    
+    if (!session) {
+        redirect('/admin/login');
+    }
+
+    const user = session.user;
     const initial = (user?.name?.charAt(0) || user?.email?.charAt(0) || "A").toUpperCase();
 
     return (

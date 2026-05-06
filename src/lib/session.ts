@@ -17,12 +17,8 @@ export async function verifySession() {
 export async function verifyAdminSession() {
     const session = await getServerSession(authOptions);
     
-    if (!session) {
-        redirect('/admin/login');
-    }
-
-    if ((session.user as any)?.role !== 'ADMIN') {
-        redirect('/admin/login?error=Unauthorized');
+    if (!session || (session.user as any)?.role !== 'ADMIN') {
+        return null; // Return null instead of throwing redirect()
     }
 
     return session;
