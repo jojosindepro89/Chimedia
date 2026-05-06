@@ -57,15 +57,20 @@ function PaymentCallbackContent() {
     }
 
     if (status === 'success') {
+        setTimeout(() => {
+            router.push("/dashboard");
+        }, 2000);
+
         return (
-            <div className="flex flex-col items-center">
+            <div className="flex flex-col items-center animate-fade-in">
                 <CheckCircle className="w-12 h-12 text-green-500 mb-4" />
                 <h2 className="text-xl font-bold uppercase mb-2">Payment Successful!</h2>
-                <p className="text-gray-400 mb-6">
-                    {isSub ? "Your membership is now active." : "Thank you for your purchase. Your order has been confirmed."}
+                <p className="text-gray-400 mb-6 text-center">
+                    {isSub ? "Your membership is now active." : "Thank you for your purchase. Your order has been confirmed."}<br/>
+                    Redirecting to your dashboard...
                 </p>
-                <Link href={isSub ? "/dashboard" : "/shop"} className="bg-primary text-black font-bold uppercase px-8 py-3 rounded hover:bg-yellow-500 transition-colors">
-                    {isSub ? "Go to Dashboard" : "Continue Shopping"}
+                <Link href="/dashboard" className="bg-primary text-black font-bold uppercase px-8 py-3 rounded hover:bg-yellow-500 transition-colors">
+                    Go to Dashboard
                 </Link>
             </div>
         );

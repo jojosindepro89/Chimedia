@@ -7,6 +7,7 @@ import { usePathname } from "next/navigation";
 import { Menu, X, Search, User, ShoppingBag } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useCart } from "@/components/providers/CartProvider";
+import { useSession } from "next-auth/react";
 import clsx from "clsx";
 
 const navLinks = [
@@ -23,6 +24,7 @@ export default function Navbar() {
     const [isScrolled, setIsScrolled] = useState(false);
     const pathname = usePathname();
     const { cartCount } = useCart();
+    const { status } = useSession();
 
     useEffect(() => {
         const handleScroll = () => {
@@ -80,13 +82,23 @@ export default function Navbar() {
                         <ShoppingBag className="w-5 h-5" />
                         <span className="absolute -top-1 -right-1 bg-primary text-black text-[10px] font-bold w-4 h-4 flex items-center justify-center rounded-full">{cartCount}</span>
                     </Link>
-                    <Link
-                        href="/login"
-                        className="flex items-center gap-2 text-sm font-medium text-black bg-primary px-4 py-2 rounded-sm hover:bg-yellow-500 transition-colors uppercase"
-                    >
-                        <User className="w-4 h-4" />
-                        <span>Join</span>
-                    </Link>
+                    {status === "authenticated" ? (
+                        <Link
+                            href="/dashboard"
+                            className="flex items-center gap-2 text-sm font-medium text-black bg-primary px-4 py-2 rounded-sm hover:bg-yellow-500 transition-colors uppercase"
+                        >
+                            <User className="w-4 h-4" />
+                            <span>Dashboard</span>
+                        </Link>
+                    ) : (
+                        <Link
+                            href="/login"
+                            className="flex items-center gap-2 text-sm font-medium text-black bg-primary px-4 py-2 rounded-sm hover:bg-yellow-500 transition-colors uppercase"
+                        >
+                            <User className="w-4 h-4" />
+                            <span>Join</span>
+                        </Link>
+                    )}
                 </div>
 
                 {/* Mobile Actions & Toggle */}
@@ -127,12 +139,21 @@ export default function Navbar() {
                                 </Link>
                             ))}
                             <div className="pt-6 border-t border-white/10 flex flex-col space-y-4">
-                                <Link
-                                    href="/login"
-                                    className="w-full text-center text-black bg-primary px-4 py-3 font-bold uppercase hover:bg-yellow-500 transition-colors"
-                                >
-                                    Sign In / Join
-                                </Link>
+                                {status === "authenticated" ? (
+                                    <Link
+                                        href="/dashboard"
+                                        className="w-full text-center text-black bg-primary px-4 py-3 font-bold uppercase hover:bg-yellow-500 transition-colors"
+                                    >
+                                        My Dashboard
+                                    </Link>
+                                ) : (
+                                    <Link
+                                        href="/login"
+                                        className="w-full text-center text-black bg-primary px-4 py-3 font-bold uppercase hover:bg-yellow-500 transition-colors"
+                                    >
+                                        Sign In / Join
+                                    </Link>
+                                )}
                             </div>
                         </div>
                     </motion.div>
