@@ -9,26 +9,42 @@ export default async function AdminDashboard() {
     const session = await verifyAdminSession();
     const adminName = (session.user as any)?.name || "Admin";
 
-    const [userCount, subCount, revenueResult, pendingPredictions, recentOrders, postCount, productCount] = await Promise.all([
-        prisma.user.count(),
-        prisma.subscription.count({ where: { status: 'ACTIVE' } }),
-        prisma.order.aggregate({
-            _sum: { totalAmount: true },
-            where: { status: { in: ['PAID', 'SHIPPED', 'DELIVERED', 'COMPLETED'] } }
-        }),
-        prisma.prediction.findMany({
-            where: { status: 'PENDING' },
-            take: 6,
-            orderBy: { createdAt: 'desc' }
-        }),
-        prisma.order.findMany({
-            take: 5,
-            orderBy: { createdAt: 'desc' },
-            include: { user: { select: { name: true, email: true } }, items: true }
-        }),
-        prisma.post.count({ where: { published: true } }),
-        prisma.product.count(),
-    ]);
+    let data;
+    try {
+        data = await Promise.all([
+            prisma.user.count(),
+            prisma.subscription.count({ where: { status: 'ACTIVE' } }),
+            prisma.order.aggregate({
+                _sum: { totalAmount: true },
+                where: { status: { in: ['PAID', 'SHIPPED', 'DELIVERED', 'COMPLETED'] } }
+            }),
+            prisma.prediction.findMany({
+                where: { status: 'PENDING' },
+                take: 6,
+                orderBy: { createdAt: 'desc' }
+            }),
+            prisma.order.findMany({
+                take: 5,
+                orderBy: { createdAt: 'desc' },
+                include: { user: { select: { name: true, email: true } }, items: true }
+            }),
+            prisma.post.count({ where: { published: true } }),
+            prisma.product.count(),
+        ]);
+    } catch (error: any) {
+        console.error("Dashboard DB Error:", error);
+        return (
+            <div className="p-8 bg-red-500/10 border border-red-500 rounded-xl">
+                <h2 className="text-xl font-bold text-red-500 mb-2">Database Error</h2>
+                <p className="text-white mb-4">There was an error fetching the dashboard statistics. This usually means the database schema is out of sync or a table is missing.</p>
+                <pre className="bg-black/50 p-4 rounded text-sm text-gray-300 whitespace-pre-wrap font-mono">
+                    {error.message || String(error)}
+                </pre>
+            </div>
+        );
+    }
+
+    const [userCount, subCount, revenueResult, pendingPredictions, recentOrders, postCount, productCount] = data;
 
     const totalRevenue = revenueResult._sum.totalAmount || 0;
     const now = new Date();
