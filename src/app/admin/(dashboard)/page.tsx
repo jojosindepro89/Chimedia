@@ -3,15 +3,10 @@ import { Users, CreditCard, TrendingUp, Activity, ArrowUpRight, Trophy, Package,
 import Link from "next/link";
 import { verifyAdminSession } from "@/lib/session";
 
-import { redirect } from "next/navigation";
-
 export const dynamic = 'force-dynamic';
 
 export default async function AdminDashboard() {
     const session = await verifyAdminSession();
-    if (!session) {
-        redirect('/admin/login');
-    }
     const adminName = (session.user as any)?.name || "Admin";
 
     const [userCount, subCount, revenueResult, pendingPredictions, recentOrders, postCount, productCount] = await Promise.all([
