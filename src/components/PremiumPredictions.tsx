@@ -39,19 +39,13 @@ export default async function PremiumPredictions() {
                     <div className="bg-zinc-950 p-4 rounded border border-white/5 mb-4 backdrop-blur-sm relative">
                         <div className="flex justify-between items-center relative z-10">
                             <div>
-                                <span className="text-xs text-gray-500 uppercase block mb-1">Market</span>
+                                <span className="text-xs text-gray-500 uppercase block mb-1">Prediction</span>
                                 <span className="text-white font-bold">{prediction.market}</span>
-                            </div>
-                            <div className="text-right">
-                                <span className="text-xs text-gray-500 uppercase block mb-1">Odds</span>
-                                <span className="text-primary font-black text-xl">{prediction.odds.toFixed(2)}</span>
                             </div>
                         </div>
                     </div>
 
-                    <div className="flex justify-between items-center">
-                        <span className="text-sm font-bold text-gray-400">Confidence: {prediction.confidence}%</span>
-                        
+                    <div className="flex justify-end items-center">
                         <Link href="/membership" className="bg-white/10 hover:bg-primary text-white hover:text-black p-2 rounded transition-colors" title="Unlock Prediction">
                             <Lock className="w-5 h-5" />
                         </Link>

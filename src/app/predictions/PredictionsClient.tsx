@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Lock, CheckCircle, XCircle, AlertCircle, Star } from "lucide-react";
+import { Lock, CheckCircle, XCircle, AlertCircle, Star, ArrowRight } from "lucide-react";
 import Link from "next/link";
 import clsx from "clsx";
 import LivePredictionsSection from "./LivePredictionsSection";
@@ -19,6 +19,7 @@ interface DailyTip {
     status: string;
     isPremium: boolean;
     isBanker: boolean;
+    leagueLogo?: string | null;
 }
 
 interface PredictionsClientProps {
@@ -64,16 +65,8 @@ export default function PredictionsClient({ freeTips, premiumTips, banker, isPre
                                 </div>
                             </div>
                             <div className="text-center">
-                                <span className="block text-gray-400 text-xs uppercase font-bold">Selection</span>
+                                <span className="block text-gray-400 text-xs uppercase font-bold">Prediction</span>
                                 <span className="text-xl font-bold text-white">{banker.selection}</span>
-                            </div>
-                            <div className="text-center">
-                                <span className="block text-gray-400 text-xs uppercase font-bold">Odds (Est.)</span>
-                                <span className="text-xl font-bold text-primary">{banker.odds.toFixed(2)}</span>
-                            </div>
-                            <div className="text-center">
-                                <span className="block text-gray-400 text-xs uppercase font-bold">Confidence</span>
-                                <span className="text-xl font-bold text-green-500">{banker.confidence}%</span>
                             </div>
                         </div>
                     </div>
@@ -83,7 +76,7 @@ export default function PredictionsClient({ freeTips, premiumTips, banker, isPre
                 <div className="space-y-4">
                     {activeTab === "Free" ? (
                         freeTips.length > 0 ? (
-                            freeTips.map(tip => <PredictionCard key={tip.id} tip={tip} />)
+                            <PredictionTable tips={freeTips} />
                         ) : (
                             <div className="text-center text-gray-500 py-12">No free tips available at the moment. Check back later!</div>
                         )
@@ -101,9 +94,9 @@ export default function PredictionsClient({ freeTips, premiumTips, banker, isPre
                                     </Link>
                                 </div>
                             )}
-                            <div className={clsx("space-y-4", !isPremiumMember && "opacity-20 pointer-events-none select-none filter blur-sm")}>
+                            <div className={clsx(!isPremiumMember && "opacity-20 pointer-events-none select-none filter blur-sm")}>
                                 {premiumTips.length > 0 ? (
-                                    premiumTips.map(tip => <PredictionCard key={tip.id} tip={tip} isPremium />)
+                                    <PredictionTable tips={premiumTips} isPremium />
                                 ) : (
                                     <div className="text-center text-gray-500 py-12">No premium tips available for today yet.</div>
                                 )}
@@ -134,50 +127,62 @@ function TabButton({ children, active, onClick, isPremium }: any) {
     )
 }
 
-function PredictionCard({ tip, isPremium }: any) {
+function PredictionTable({ tips, isPremium }: { tips: DailyTip[], isPremium?: boolean }) {
     return (
-        <div className={clsx(
-            "bg-zinc-900 border p-6 rounded-sm flex flex-col md:flex-row items-center justify-between gap-6 transition-colors hover:bg-zinc-800",
-            isPremium ? "border-primary/30" : "border-white/5"
-        )}>
-            <div className="flex-1">
-                <div className="flex items-center gap-3 mb-2">
-                    <span className="bg-black text-xs font-bold px-2 py-1 rounded text-gray-400">{tip.time}</span>
-                    {isPremium && <span className="bg-primary text-black text-xs font-bold px-2 py-1 rounded uppercase">Premium</span>}
-                </div>
-                <h3 className="text-xl font-bold text-white">{tip.match}</h3>
-            </div>
-
-            <div className="flex items-center gap-8 w-full md:w-auto justify-between md:justify-end">
-                <div className="text-center">
-                    <span className="block text-xs text-gray-500 uppercase font-bold mb-1">Selection</span>
-                    <span className="text-lg font-bold text-white block">{tip.market}</span>
-                </div>
-                <div className="text-center">
-                    <span className="block text-xs text-gray-500 uppercase font-bold mb-1">Odds</span>
-                    <span className="text-xl font-bold text-primary block">{tip.odds.toFixed(2)}</span>
-                </div>
-                <div className="w-24 flex justify-end">
-                    {tip.status === "PENDING" ? (
-                        <div className="flex flex-col items-center">
-                            <div className="w-12 h-12 rounded-full border-4 border-zinc-700 flex items-center justify-center relative">
-                                <span className="text-xs font-bold text-white">{tip.confidence}%</span>
-                                <svg className="absolute inset-0 w-full h-full -rotate-90" viewBox="0 0 36 36">
-                                    <path className="text-primary" strokeDasharray={`${tip.confidence}, 100`} d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" strokeWidth="4" />
-                                </svg>
-                            </div>
-                        </div>
-                    ) : (
-                        <StatusBadge status={tip.status} />
-                    )}
-                </div>
-            </div>
+        <div className="overflow-x-auto bg-white rounded shadow-xl">
+            <table className="w-full text-left border-collapse text-black min-w-[500px]">
+                <thead>
+                    <tr className="border-b-2 border-black text-sm md:text-base">
+                        <th className="p-3 md:p-4 font-black uppercase text-center border-r border-gray-300 w-24 md:w-32">League</th>
+                        <th className="p-3 md:p-4 font-black uppercase border-r border-gray-300">Match</th>
+                        <th className="p-3 md:p-4 font-black text-center border-r border-gray-300 w-12 md:w-16"></th>
+                        <th className="p-3 md:p-4 font-black uppercase text-center">Prediction</th>
+                    </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-300">
+                    {tips.map((tip, idx) => (
+                        <tr key={tip.id || idx} className="hover:bg-gray-50 transition-colors">
+                            <td className="p-2 md:p-3 text-center border-r border-gray-300">
+                                {tip.leagueLogo ? (
+                                    <img src={tip.leagueLogo} alt={tip.league} className="w-8 h-8 md:w-10 md:h-10 object-contain mx-auto" />
+                                ) : (
+                                    <div className="w-8 h-8 md:w-10 md:h-10 rounded-full bg-gray-200 text-gray-600 flex items-center justify-center mx-auto text-xs md:text-sm font-bold border border-gray-300">
+                                        {tip.league.substring(0, 3).toUpperCase()}
+                                    </div>
+                                )}
+                            </td>
+                            <td className="p-3 md:p-4 border-r border-gray-300">
+                                <div className="font-bold text-lg md:text-xl leading-tight">
+                                    {tip.match}
+                                </div>
+                                {isPremium && (
+                                    <div className="flex items-center gap-2 mt-1">
+                                        <span className="bg-primary text-black text-[10px] font-bold px-1.5 py-0.5 rounded uppercase">Premium</span>
+                                        <span className="text-gray-500 text-xs font-semibold">{tip.time}</span>
+                                    </div>
+                                )}
+                            </td>
+                            <td className="p-2 md:p-3 text-center text-black border-r border-gray-300">
+                                <ArrowRight className="w-5 h-5 md:w-6 md:h-6 mx-auto stroke-[3]" />
+                            </td>
+                            <td className="p-3 md:p-4 text-center">
+                                <span className="font-bold text-lg md:text-xl">{tip.selection}</span>
+                                {tip.status !== "PENDING" && (
+                                    <div className="mt-1 flex justify-center">
+                                        <StatusBadge status={tip.status} />
+                                    </div>
+                                )}
+                            </td>
+                        </tr>
+                    ))}
+                </tbody>
+            </table>
         </div>
     )
 }
 
 function StatusBadge({ status }: { status: string }) {
-    if (status === "WON") return <span className="text-green-500 font-bold flex items-center gap-1 uppercase"><CheckCircle className="w-5 h-5" /> Won</span>;
-    if (status === "LOST") return <span className="text-red-500 font-bold flex items-center gap-1 uppercase"><XCircle className="w-5 h-5" /> Lost</span>;
-    return <span className="text-gray-500 font-bold flex items-center gap-1 uppercase"><AlertCircle className="w-5 h-5" /> Void</span>;
+    if (status === "WON") return <span className="text-green-600 font-bold flex items-center gap-1 uppercase text-sm"><CheckCircle className="w-4 h-4" /> Won</span>;
+    if (status === "LOST") return <span className="text-red-600 font-bold flex items-center gap-1 uppercase text-sm"><XCircle className="w-4 h-4" /> Lost</span>;
+    return <span className="text-gray-600 font-bold flex items-center gap-1 uppercase text-sm"><AlertCircle className="w-4 h-4" /> Void</span>;
 }

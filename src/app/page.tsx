@@ -6,6 +6,8 @@ import BreakingNewsTicker from "@/components/BreakingNewsTicker";
 import PremiumPredictions from "@/components/PremiumPredictions";
 import { prisma } from "@/lib/prisma";
 
+export const dynamic = 'force-dynamic';
+
 export default async function Home() {
   const latestNews = await prisma.post.findMany({
     where: { published: true },
@@ -108,11 +110,6 @@ export default async function Home() {
         <div className="container mx-auto px-4 text-center">
           <h2 className="text-3xl font-bold text-white mb-12 uppercase tracking-tighter">Upcoming <span className="text-primary">Matches</span></h2>
           <UpcomingFixtures />
-          <div className="mt-12">
-            <Link href="/live-scores" className="px-8 py-3 bg-zinc-800 text-white hover:bg-white hover:text-black font-bold uppercase rounded-sm transition-colors cursor-pointer">
-              View All Fixtures
-            </Link>
-          </div>
         </div>
       </section>
 

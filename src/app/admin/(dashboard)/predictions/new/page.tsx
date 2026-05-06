@@ -30,26 +30,26 @@ export default function NewPredictionPage() {
                 {/* Match Details */}
                 <div className="bg-[#161616] border border-white/[0.08] rounded-xl p-6">
                     <h2 className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-5">Match Details</h2>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    <div className="grid grid-cols-1 gap-5">
                         <div>
-                            <label className="block text-xs uppercase font-bold text-gray-500 mb-2 tracking-wider">Home Team</label>
-                            <input name="homeTeam" type="text" required
+                            <label className="block text-xs uppercase font-bold text-gray-500 mb-2 tracking-wider">Club / Match Name</label>
+                            <input name="matchTitle" type="text" required
                                 className="w-full bg-black/40 border border-white/[0.08] rounded-lg px-4 py-3 text-white text-sm focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/20 transition-all placeholder-gray-700"
-                                placeholder="e.g. Manchester City" />
-                        </div>
-                        <div>
-                            <label className="block text-xs uppercase font-bold text-gray-500 mb-2 tracking-wider">Away Team</label>
-                            <input name="awayTeam" type="text" required
-                                className="w-full bg-black/40 border border-white/[0.08] rounded-lg px-4 py-3 text-white text-sm focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/20 transition-all placeholder-gray-700"
-                                placeholder="e.g. Liverpool" />
+                                placeholder="e.g. Atl Madrid or Sporting CP" />
                         </div>
                     </div>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mt-5">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-5 mt-5">
                         <div>
                             <label className="block text-xs uppercase font-bold text-gray-500 mb-2 tracking-wider">League / Competition</label>
                             <input name="league" type="text"
                                 className="w-full bg-black/40 border border-white/[0.08] rounded-lg px-4 py-3 text-white text-sm focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/20 transition-all placeholder-gray-700"
                                 placeholder="e.g. Premier League" />
+                        </div>
+                        <div>
+                            <label className="block text-xs uppercase font-bold text-gray-500 mb-2 tracking-wider">Logo URL (Optional)</label>
+                            <input name="logoUrl" type="url"
+                                className="w-full bg-black/40 border border-white/[0.08] rounded-lg px-4 py-3 text-white text-sm focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/20 transition-all placeholder-gray-700"
+                                placeholder="https://.../logo.png" />
                         </div>
                         <div>
                             <label className="block text-xs uppercase font-bold text-gray-500 mb-2 tracking-wider">Kickoff Time</label>
@@ -62,24 +62,12 @@ export default function NewPredictionPage() {
                 {/* Prediction Details */}
                 <div className="bg-[#161616] border border-white/[0.08] rounded-xl p-6">
                     <h2 className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-5">Prediction Details</h2>
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+                    <div className="grid grid-cols-1 gap-5">
                         <div>
-                            <label className="block text-xs uppercase font-bold text-gray-500 mb-2 tracking-wider">Market / Bet Type</label>
+                            <label className="block text-xs uppercase font-bold text-gray-500 mb-2 tracking-wider">Prediction</label>
                             <input name="market" type="text" required
                                 className="w-full bg-black/40 border border-white/[0.08] rounded-lg px-4 py-3 text-white text-sm focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/20 transition-all placeholder-gray-700"
-                                placeholder="e.g. Over 2.5 Goals" />
-                        </div>
-                        <div>
-                            <label className="block text-xs uppercase font-bold text-gray-500 mb-2 tracking-wider">Odds</label>
-                            <input name="odds" type="number" step="0.01" min="1" required
-                                className="w-full bg-black/40 border border-white/[0.08] rounded-lg px-4 py-3 text-white text-sm focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/20 transition-all placeholder-gray-700"
-                                placeholder="1.85" />
-                        </div>
-                        <div>
-                            <label className="block text-xs uppercase font-bold text-gray-500 mb-2 tracking-wider">Confidence (%)</label>
-                            <input name="confidence" type="number" min="1" max="100"
-                                className="w-full bg-black/40 border border-white/[0.08] rounded-lg px-4 py-3 text-white text-sm focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/20 transition-all placeholder-gray-700"
-                                placeholder="85" />
+                                placeholder="e.g. Win/Draw, Over 1.5, etc." />
                         </div>
                     </div>
                     <div className="mt-5">

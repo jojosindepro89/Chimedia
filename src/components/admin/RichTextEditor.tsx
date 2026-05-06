@@ -7,7 +7,7 @@ import TextAlign from "@tiptap/extension-text-align";
 import Highlight from "@tiptap/extension-highlight";
 import { TextStyle } from "@tiptap/extension-text-style";
 import Color from "@tiptap/extension-color";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import {
     Bold, Italic, Underline as UnderlineIcon, Strikethrough,
     List, ListOrdered, AlignLeft, AlignCenter, AlignRight,
@@ -23,7 +23,14 @@ interface RichTextEditorProps {
 }
 
 export default function RichTextEditor({ name, defaultValue = "", placeholder = "Write your prediction analysis here..." }: RichTextEditorProps) {
+    const [mounted, setMounted] = useState(false);
+
+    useEffect(() => {
+        setMounted(true);
+    }, []);
+
     const editor = useEditor({
+        immediatelyRender: false,
         extensions: [
             StarterKit,
             Underline,
@@ -44,7 +51,7 @@ export default function RichTextEditor({ name, defaultValue = "", placeholder = 
         if (editor && defaultValue) {
             editor.commands.setContent(defaultValue);
         }
-    }, [defaultValue]);
+    }, [defaultValue, editor]);
 
     const ToolbarButton = ({ onClick, active, title, children }: any) => (
         <button
@@ -63,6 +70,12 @@ export default function RichTextEditor({ name, defaultValue = "", placeholder = 
     );
 
     const Divider = () => <div className="w-px h-5 bg-white/10 mx-1" />;
+
+    if (!mounted) {
+        return <div className="min-h-[280px] border border-white/[0.08] rounded-xl bg-black/40 flex items-center justify-center">
+            <span className="text-gray-500 text-sm">Loading editor...</span>
+        </div>;
+    }
 
     if (!editor) return null;
 

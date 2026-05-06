@@ -221,29 +221,30 @@ export async function deleteProduct(id: string) {
 // --- PREDICTIONS ---
 export async function createPrediction(prevState: any, formData: FormData) {
     await verifyAdminSession()
-    const homeTeam = formData.get('homeTeam') as string
-    const awayTeam = formData.get('awayTeam') as string
+    const matchTitle = formData.get('matchTitle') as string
     const market = formData.get('market') as string
-    const odds = parseFloat(formData.get('odds') as string)
-    const confidence = parseInt(formData.get('confidence') as string)
     const analysis = formData.get('analysis') as string
     const type = formData.get('type') as string // free, premium, banker
     const dateStr = formData.get('date') as string
+    const league = formData.get('league') as string
+    const logoUrl = formData.get('logoUrl') as string
 
-    if (!homeTeam || !awayTeam || !market || !dateStr) {
+    if (!matchTitle || !market || !dateStr) {
         return { message: 'Missing required fields' }
     }
 
     try {
         await prisma.prediction.create({
             data: {
-                matchTitle: `${homeTeam} vs ${awayTeam}`,
+                matchTitle: matchTitle,
+                league: league,
                 date: new Date(dateStr),
                 market,
-                selection: 'TBD', // This could be significantly improved by adding a specific field for selection in the form
-                odds,
-                confidence,
+                selection: market, // Use market as the prediction selection
+                odds: 1.0,
+                confidence: 50,
                 analysis,
+                resultScore: logoUrl, // Repurpose resultScore to hold the logo URL
                 isPremium: type === 'premium' || type === 'banker', // Bankers are usually premium too
                 isBanker: type === 'banker',
                 status: 'PENDING'
@@ -261,26 +262,28 @@ export async function createPrediction(prevState: any, formData: FormData) {
 
 export async function updatePrediction(id: string, prevState: any, formData: FormData) {
     await verifyAdminSession()
-    const homeTeam = formData.get('homeTeam') as string
-    const awayTeam = formData.get('awayTeam') as string
+    const matchTitle = formData.get('matchTitle') as string
     const market = formData.get('market') as string
-    const odds = parseFloat(formData.get('odds') as string)
-    const confidence = parseInt(formData.get('confidence') as string)
     const analysis = formData.get('analysis') as string
     const type = formData.get('type') as string
     const dateStr = formData.get('date') as string
     const status = formData.get('status') as string
+    const league = formData.get('league') as string
+    const logoUrl = formData.get('logoUrl') as string
 
     try {
         await prisma.prediction.update({
             where: { id },
             data: {
-                matchTitle: `${homeTeam} vs ${awayTeam}`,
+                matchTitle: matchTitle,
+                league: league,
                 date: new Date(dateStr),
                 market,
-                odds,
-                confidence,
+                selection: market,
+                odds: 1.0,
+                confidence: 50,
                 analysis,
+                resultScore: logoUrl,
                 isPremium: type === 'premium',
                 isBanker: type === 'banker',
                 status: status || 'PENDING'

@@ -32,7 +32,8 @@ export default async function PredictionsPage() {
             analysis: p.analysis,
             status: p.status,
             isPremium: p.isPremium,
-            isBanker: p.isBanker
+            isBanker: p.isBanker,
+            leagueLogo: p.resultScore || null
         };
 
         if (p.isPremium) {

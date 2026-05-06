@@ -31,7 +31,6 @@ export default function Footer() {
                         <h3 className="text-primary font-bold uppercase tracking-wider mb-6">Quick Links</h3>
                         <ul className="space-y-3">
                             <FooterLink href="/news" label="News" />
-                            <FooterLink href="/live-scores" label="Live Scores" />
                             <FooterLink href="/membership" label="Membership" />
                         </ul>
                     </div>

@@ -14,6 +14,7 @@ export interface DailyTip {
     isPremium: boolean;
     isBanker: boolean;
     analysis: string | null;
+    leagueLogo?: string;
 }
 
 export async function getDailyPredictions(): Promise<{ free: DailyTip[], premium: DailyTip[] }> {
@@ -82,7 +83,8 @@ export async function getDailyPredictions(): Promise<{ free: DailyTip[], premium
                 status: "PENDING",
                 isPremium: isPremium,
                 isBanker: isBanker,
-                analysis: prediction.comment || null
+                analysis: prediction.comment || null,
+                leagueLogo: match.league.flag || match.league.logo // API has flag or logo
             } as DailyTip;
         });
 

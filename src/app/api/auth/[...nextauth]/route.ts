@@ -64,20 +64,7 @@ export const authOptions: NextAuthOptions = {
         signIn: '/login',
     },
     secret: process.env.NEXTAUTH_SECRET,
-    jwt: {
-        // Gracefully handle tokens signed with an old secret by returning null
-        // instead of throwing JWEDecryptionFailed which causes a 500 error.
-        async decode(params) {
-            try {
-                const { decode } = await import('next-auth/jwt');
-                return await decode(params);
-            } catch (e) {
-                // Old/invalid token — treat as unauthenticated. 
-                // Browser will get a fresh token on next login.
-                return null;
-            }
-        }
-    },
+    // Custom decode removed to prevent hanging during authentication
 };
 
 const handler = NextAuth(authOptions);
