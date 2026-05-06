@@ -4,6 +4,8 @@ import { verifyAdminSession } from "@/lib/session";
 import { adminLogout } from "@/app/actions";
 import AdminNav from "@/components/admin/SidebarLink";
 
+export const dynamic = 'force-dynamic';
+
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
     const session = await verifyAdminSession();
     const user = session?.user;
