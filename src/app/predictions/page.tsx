@@ -10,10 +10,21 @@ export default async function PredictionsPage() {
     const { free, premium } = await getDailyPredictions();
 
     // 2. Fetch Admin manual predictions from the database
-    const adminDbPredictions = await prisma.prediction.findMany({
-        where: { status: 'PENDING' },
-        orderBy: { date: 'asc' }
-    });
+    let adminDbPredictions: any[] = [];
+    let errorMsg = "";
+    try {
+        adminDbPredictions = await prisma.prediction.findMany({
+            where: { status: 'PENDING' },
+            orderBy: { date: 'asc' }
+        });
+    } catch (e: any) {
+        console.error("Prisma Error:", e);
+        errorMsg = e.message || String(e);
+    }
+
+    if (errorMsg) {
+        return <div className="text-white p-20 mt-20 bg-black min-h-screen">Database Error: {errorMsg}</div>;
+    }
 
     const mappedAdminFree: any[] = [];
     const mappedAdminPremium: any[] = [];
