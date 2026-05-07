@@ -4,7 +4,7 @@ import { redirect } from "next/navigation";
 import { initializePayment } from "@/lib/paystack";
 import { prisma } from "@/lib/prisma";
 import { hash } from "bcryptjs";
-import { createSession } from "@/lib/session";
+import { createSession, getSession } from "@/lib/session";
 
 function getBaseUrl() {
     if (process.env.NEXT_PUBLIC_APP_URL) return process.env.NEXT_PUBLIC_APP_URL;
@@ -13,15 +13,36 @@ function getBaseUrl() {
     return process.env.NEXTAUTH_URL || 'http://localhost:3000';
 }
 
-export async function initiateCheckout(amount: number) {
+export async function initiateCheckout(amount: number, items: any[]) {
     console.log("🚀 initiateCheckout called with amount:", amount);
 
-    // In a real app you'd get the user's email from session
-    const email = "customer@example.com";
+    const session = await getSession();
+    const email = session?.user?.email || "guest@cmhsports.com";
 
-    // callback URL
+    let userId = null;
+    if (session?.user?.email) {
+        const user = await prisma.user.findUnique({ where: { email: session.user.email } });
+        if (user) userId = user.id;
+    }
+
+    // Create the order
+    const order = await prisma.order.create({
+        data: {
+            userId: userId,
+            totalAmount: amount,
+            status: "PENDING",
+            items: {
+                create: items.map(item => ({
+                    productId: item.id,
+                    quantity: item.quantity,
+                    price: item.price
+                }))
+            }
+        }
+    });
+
     const baseUrl = getBaseUrl();
-    const callbackUrl = `${baseUrl}/payment/callback`;
+    const callbackUrl = `${baseUrl}/payment/callback?orderId=${order.id}`;
 
     console.log("Payload:", { email, amount, callbackUrl });
 
@@ -33,7 +54,6 @@ export async function initiateCheckout(amount: number) {
         console.log("Redirecting to:", response.data.authorization_url);
         redirect(response.data.authorization_url);
     } else {
-        // Handle error
         console.error("Payment initialization failed", response);
         throw new Error("Payment initialization failed: " + (response.message || 'Unknown error'));
     }

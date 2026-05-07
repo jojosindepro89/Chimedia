@@ -74,7 +74,7 @@ export default function CartPage() {
                         </div>
 
                         <form action={async () => {
-                            await initiateCheckout(finalTotal);
+                            await initiateCheckout(finalTotal, items);
                         }}>
                             <button type="submit" className="w-full bg-primary text-black font-bold uppercase py-4 rounded hover:bg-yellow-500 transition-colors flex items-center justify-center gap-2 shadow-lg shadow-primary/20">
                                 <CreditCard className="w-5 h-5" /> Proceed to Checkout (Paystack)

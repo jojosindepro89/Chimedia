@@ -4,7 +4,7 @@ import { prisma } from '@/lib/prisma';
 
 export async function POST(req: Request) {
     try {
-        const { reference, plan, userId } = await req.json();
+        const { reference, plan, userId, orderId } = await req.json();
 
         if (!reference) {
             return NextResponse.json({ success: false, message: 'Missing payment reference' }, { status: 400 });
@@ -46,9 +46,12 @@ export async function POST(req: Request) {
                         status: 'ACTIVE'
                     }
                 });
-            } else {
-                // In an actual app, handle normal e-commerce order completion here.
-                // For instance, update prisma.order status to 'PAID'.
+            } else if (orderId) {
+                // Handle shop order completion
+                await prisma.order.update({
+                    where: { id: orderId },
+                    data: { status: 'COMPLETED' }
+                });
             }
 
             return NextResponse.json({ success: true, isSubscription });

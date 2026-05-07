@@ -12,6 +12,7 @@ function PaymentCallbackContent() {
     const reference = searchParams.get("reference");
     const plan = searchParams.get("plan");
     const userId = searchParams.get("userId");
+    const orderId = searchParams.get("orderId");
 
     const [status, setStatus] = useState<'loading' | 'success' | 'error'>('loading');
     const [isSub, setIsSub] = useState(false);
@@ -24,7 +25,7 @@ function PaymentCallbackContent() {
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ reference, plan, userId })
+                body: JSON.stringify({ reference, plan, userId, orderId })
             })
                 .then(res => res.json())
                 .then(data => {
