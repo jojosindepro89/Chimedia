@@ -1,0 +1,124 @@
+Retrieving project…
+Deploying joseph-basseys-projects-27fc4c7d/cmhsports
+Uploading [--------------------] (0.0B/144KB)
+Uploading [=====---------------] (36.9KB/144KB)
+Uploading [===========---------] (84.9KB/144KB)
+Uploading [================----] (116.9KB/144KB)
+Uploading [====================] (144.0KB/144KB)
+Inspect: https://vercel.com/joseph-basseys-projects-27fc4c7d/cmhsports/AuUwQfUdrmzBjjJHtS48b55pSXhB [9s]
+Production: https://cmhsports-q5omhbwfn-joseph-basseys-projects-27fc4c7d.vercel.app [9s]
+https://cmhsports-q5omhbwfn-joseph-basseys-projects-27fc4c7d.vercel.appBuilding...
+Building: Running build in Washington, D.C., USA (East) – iad1
+Building: Build machine configuration: 2 cores, 8 GB
+Building: Retrieving list of deployment files...
+Building: Downloading 137 deployment files...
+Building: Downloading 137 deployment files...
+Building: Restored build cache from previous deployment (GeH1MgjNYxtFXgBaxZudD7heGA1r)
+Building: Running "vercel build"
+Building: Vercel CLI 51.6.1
+Building: Installing dependencies...
+Building: up to date in 861ms
+Building: 184 packages are looking for funding
+Building: run `npm fund` for details
+Building: Detected Next.js version: 16.1.6
+Building: Running "npm run build"
+Building: > cmhsports@0.1.0 build
+Building: > prisma generate && prisma db push --accept-data-loss && next build
+Building: Environment variables loaded from .env
+Building: Prisma schema loaded from prisma/schema.prisma
+Building: ✔ Generated Prisma Client (v5.22.0) to ./node_modules/@prisma/client in 185ms
+Building: Start by importing your Prisma Client (See: https://pris.ly/d/importing-client)
+Building: Tip: Need your database queries to be 1000x faster? Accelerate offers you that and more: https://pris.ly/tip-2-accelerate
+Building: Environment variables loaded from .env
+Building: Prisma schema loaded from prisma/schema.prisma
+Building: Datasource "db": PostgreSQL database "neondb", schema "public" at "ep-winter-unit-aii55k6e.c-4.us-east-1.aws.neon.tech"
+Building: The database is already in sync with the Prisma schema.
+Building: Running generate... (Use --skip-generate to skip the generators)
+Building: Running generate... - Prisma Client
+Building: ✔ Generated Prisma Client (v5.22.0) to ./node_modules/@prisma/client in 152ms
+Building: ┌─────────────────────────────────────────────────────────┐
+Building: │  Update available 5.22.0 -> 7.8.0                       │
+Building: │                                                         │
+Building: │  This is a major update - please follow the guide at    │
+Building: │  https://pris.ly/d/major-version-upgrade                │
+Building: │                                                         │
+Building: │  Run the following to update                            │
+Building: │    npm i --save-dev prisma@latest                       │
+Building: │    npm i @prisma/client@latest                          │
+Building: └─────────────────────────────────────────────────────────┘
+Building: ▲ Next.js 16.1.6 (Turbopack)
+Building: - Environments: .env
+Building: Creating an optimized production build ...
+Building: ✓ Compiled successfully in 15.1s
+Building: Running TypeScript ...
+Building: Collecting page data using 1 worker ...
+Building: Generating static pages using 1 worker (0/19) ...
+Building: Generating static pages using 1 worker (4/19)
+Building: Generating static pages using 1 worker (9/19)
+Building: Generating static pages using 1 worker (14/19)
+Building: ✓ Generating static pages using 1 worker (19/19) in 336.8ms
+Building: Finalizing page optimization ...
+Building: Route (app)
+Building: ┌ ƒ /
+Building: ├ ○ /_not-found
+Building: ├ ƒ /admin
+Building: ├ ƒ /admin/api-config
+Building: ├ ƒ /admin/fixtures
+Building: ├ ƒ /admin/login
+Building: ├ ƒ /admin/members
+Building: ├ ƒ /admin/orders
+Building: ├ ƒ /admin/posts
+Building: ├ ƒ /admin/posts/[id]/edit
+Building: ├ ƒ /admin/posts/new
+Building: ├ ƒ /admin/predictions
+Building: ├ ƒ /admin/predictions/[id]/edit
+Building: ├ ƒ /admin/predictions/new
+Building: ├ ƒ /admin/settings
+Building: ├ ƒ /admin/setup
+Building: ├ ƒ /admin/shop
+Building: ├ ƒ /admin/shop/[id]/edit
+Building: ├ ƒ /admin/shop/new
+Building: ├ ƒ /api/auth/[...nextauth]
+Building: ├ ƒ /api/debug-env
+Building: ├ ƒ /api/live-scores
+Building: ├ ƒ /api/payment/verify
+Building: ├ ○ /cart
+Building: ├ ○ /contact
+Building: ├ ƒ /dashboard
+Building: ├ ƒ /dashboard/orders
+Building: ├ ○ /dashboard/settings
+Building: ├ ƒ /dashboard/subscription
+Building: ├ ○ /icon.png
+Building: ├ ƒ /live-match/[id]
+Building: ├ ○ /login
+Building: ├ ○ /login/forgot-password
+Building: ├ ○ /login/reset-password
+Building: ├ ○ /membership
+Building: ├ ƒ /news
+Building: ├ ƒ /news/[slug]
+Building: ├ ƒ /news/read
+Building: ├ ○ /payment/callback
+Building: ├ ƒ /predictions
+Building: ├ ○ /privacy
+Building: ├ ○ /register
+Building: ├ ○ /return-policy
+Building: ├ ƒ /shop
+Building: ├ ƒ /shop/[id]
+Building: └ ○ /terms
+Building: ƒ Proxy (Middleware)
+Building: ○  (Static)   prerendered as static content
+Building: ƒ  (Dynamic)  server-rendered on demand
+Building: Traced Next.js server files in: 62.569ms
+Building: Created all serverless functions in: 536.348ms
+Building: Collected static files (public/, static/, .next/static): 5.094ms
+Building: Build Completed in /vercel/output [30s]
+Building: Deploying outputs...
+Building: Deployment completed
+Building: Creating build cache...
+[2K[1A[2K[GProduction: https://cmhsports-q5omhbwfn-joseph-basseys-projects-27fc4c7d.vercel.app [1m]
+Completing...
+Aliased: https://cmhsports.vercel.app [1m]
+
+Common next commands:
+- `vercel inspect cmhsports-q5omhbwfn-joseph-basseys-projects-27fc4c7d.vercel.app --logs`
+- `vercel redeploy cmhsports-q5omhbwfn-joseph-basseys-projects-27fc4c7d.vercel.app`
