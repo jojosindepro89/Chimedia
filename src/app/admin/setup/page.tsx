@@ -10,7 +10,7 @@ const initialState = { message: '', success: false };
 export default function AdminSetupPage() {
     const [state, formAction, isPending] = useActionState(createFirstAdmin, initialState);
     const [showPassword, setShowPassword] = useState(false);
-    const [showSecret, setShowSecret] = useState(false);
+
 
     return (
         <div className="min-h-screen bg-[#0a0a0a] flex items-center justify-center p-4 relative overflow-hidden">
@@ -40,14 +40,7 @@ export default function AdminSetupPage() {
                         </div>
                     </div>
 
-                    {/* Security notice */}
-                    <div className="flex items-start gap-3 bg-yellow-500/[0.06] border border-yellow-500/20 rounded-xl p-4 mb-6">
-                        <Key className="w-4 h-4 text-yellow-500 shrink-0 mt-0.5" />
-                        <div className="text-xs text-yellow-500/80 leading-relaxed">
-                            <span className="font-bold text-yellow-500 block mb-0.5">Secret key required</span>
-                            If an admin account already exists, you must provide the <code className="bg-white/10 px-1 rounded font-mono">ADMIN_SETUP_SECRET</code> from your environment variables to create additional admins.
-                        </div>
-                    </div>
+
 
                     <form action={formAction} className="space-y-5">
                         {/* Full Name */}
@@ -103,28 +96,7 @@ export default function AdminSetupPage() {
                             </div>
                         </div>
 
-                        {/* Secret Key */}
-                        <div>
-                            <label className="block text-xs uppercase font-bold text-gray-500 mb-2 tracking-wider">
-                                Setup Secret Key <span className="text-gray-700 normal-case font-normal">(required if admin exists)</span>
-                            </label>
-                            <div className="relative">
-                                <Key className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-600" />
-                                <input
-                                    name="secretKey"
-                                    type={showSecret ? "text" : "password"}
-                                    className="w-full bg-black/40 border border-white/[0.08] rounded-xl pl-11 pr-12 py-3 text-white text-sm focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/20 transition-all placeholder-gray-700"
-                                    placeholder="ADMIN_SETUP_SECRET value"
-                                />
-                                <button
-                                    type="button"
-                                    onClick={() => setShowSecret(v => !v)}
-                                    className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-600 hover:text-gray-400 transition-colors"
-                                >
-                                    {showSecret ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                                </button>
-                            </div>
-                        </div>
+
 
                         {/* Error / Success */}
                         {state?.message && (

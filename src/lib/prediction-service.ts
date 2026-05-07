@@ -42,9 +42,9 @@ export async function getDailyPredictions(): Promise<{ free: DailyTip[], premium
             if (!predData) return null;
 
             const prediction = predData.predictions;
-            const advice = prediction.advice;
-            const percent = prediction.percent;
-            const winner = prediction.winner;
+            const advice = prediction.advice || "";
+            const percent = prediction.percent || {};
+            const winner = prediction.winner || { name: "Unknown" };
 
             let selection = "Unknown";
             let market = "Result";
@@ -60,11 +60,11 @@ export async function getDailyPredictions(): Promise<{ free: DailyTip[], premium
                 market = "Double Chance";
                 selection = advice.split(" : ")[1] || advice;
             } else {
-                selection = advice;
+                selection = advice || "Unknown";
             }
 
             const values = Object.values(percent).map((v: any) => parseInt(v?.replace("%", "") || "0"));
-            confidence = Math.max(...values);
+            confidence = Math.max(...values, 1); // ensure > 0 to avoid Infinity
 
             const simulatedOdds = 1 + (100 / confidence);
 

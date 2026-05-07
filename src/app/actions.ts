@@ -357,13 +357,8 @@ export async function createFirstAdmin(prevState: any, formData: FormData) {
         return { message: 'Invalid data. Password must be at least 6 characters.', success: false }
     }
 
-    // Security: If any admin already exists, require the setup secret key
-    const adminCount = await prisma.user.count({ where: { role: 'ADMIN' } })
-    if (adminCount > 0) {
-        if (!secretKey || secretKey !== process.env.ADMIN_SETUP_SECRET) {
-            return { message: 'An admin account already exists. Provide the correct Setup Secret Key to add another.', success: false }
-        }
-    }
+    // Security: Check if admin exists logic removed as per user request
+
 
     try {
         const hashedPassword = await bcrypt.hash(password, 10)
