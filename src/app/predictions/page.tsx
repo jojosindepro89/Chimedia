@@ -29,11 +29,12 @@ export default async function PredictionsPage() {
             selection: p.selection,
             odds: p.odds,
             confidence: p.confidence,
-            analysis: p.analysis,
+            analysis: null,
             status: p.status,
             isPremium: p.isPremium,
             isBanker: p.isBanker,
-            leagueLogo: p.resultScore || null
+            leagueLogo: p.resultScore || null,
+            codeImage: p.codeImage || null
         };
 
         if (p.isPremium) {

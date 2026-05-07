@@ -6,8 +6,7 @@ import { useActionState, useRef } from "react";
 import { createPrediction } from "@/app/actions";
 import dynamic from "next/dynamic";
 
-// Dynamically import the editor to avoid SSR issues
-const RichTextEditor = dynamic(() => import("@/components/admin/RichTextEditor"), { ssr: false });
+// Removed RichTextEditor dynamic import
 
 const initialState = { message: '' };
 
@@ -38,7 +37,7 @@ export default function NewPredictionPage() {
                                 placeholder="e.g. Atl Madrid or Sporting CP" />
                         </div>
                     </div>
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-5 mt-5">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mt-5">
                         <div>
                             <label className="block text-xs uppercase font-bold text-gray-500 mb-2 tracking-wider">League / Competition</label>
                             <input name="league" type="text"
@@ -50,11 +49,6 @@ export default function NewPredictionPage() {
                             <input name="logoUrl" type="url"
                                 className="w-full bg-black/40 border border-white/[0.08] rounded-lg px-4 py-3 text-white text-sm focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/20 transition-all placeholder-gray-700"
                                 placeholder="https://.../logo.png" />
-                        </div>
-                        <div>
-                            <label className="block text-xs uppercase font-bold text-gray-500 mb-2 tracking-wider">Kickoff Time</label>
-                            <input name="date" type="datetime-local" required
-                                className="w-full bg-black/40 border border-white/[0.08] rounded-lg px-4 py-3 text-white text-sm focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/20 transition-all" />
                         </div>
                     </div>
                 </div>
@@ -81,11 +75,12 @@ export default function NewPredictionPage() {
                     </div>
                 </div>
 
-                {/* Expert Analysis - Rich Text Editor */}
+                {/* Image Upload for Betting Code */}
                 <div className="bg-[#161616] border border-white/[0.08] rounded-xl p-6">
-                    <h2 className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">Expert Analysis</h2>
-                    <p className="text-gray-600 text-xs mb-5">Write your full prediction breakdown. Use the toolbar to format it like a Word document — headings, bold, lists, alignment, and more.</p>
-                    <RichTextEditor name="analysis" placeholder="Write your detailed expert analysis here... Use headings, bold text, bullet points, and quotes to make it easy to read." />
+                    <h2 className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">Betting Code Image (Optional)</h2>
+                    <p className="text-gray-600 text-xs mb-5">Upload a screenshot of the betting slip or booking code.</p>
+                    <input name="codeImage" type="file" accept="image/*"
+                        className="w-full bg-black/40 border border-white/[0.08] rounded-lg px-4 py-3 text-white text-sm focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/20 transition-all file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary/10 file:text-primary hover:file:bg-primary/20" />
                 </div>
 
                 {state?.message && (

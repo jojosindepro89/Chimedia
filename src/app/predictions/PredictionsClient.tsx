@@ -20,6 +20,7 @@ interface DailyTip {
     isPremium: boolean;
     isBanker: boolean;
     leagueLogo?: string | null;
+    codeImage?: string | null;
 }
 
 interface PredictionsClientProps {
@@ -67,6 +68,11 @@ export default function PredictionsClient({ freeTips, premiumTips, banker, isPre
                             <div className="text-center">
                                 <span className="block text-gray-400 text-xs uppercase font-bold">Prediction</span>
                                 <span className="text-xl font-bold text-white">{banker.selection}</span>
+                                {banker.codeImage && (
+                                    <a href={banker.codeImage} target="_blank" rel="noreferrer" className="block mt-2 text-primary text-sm font-bold uppercase hover:underline">
+                                        View Code Image
+                                    </a>
+                                )}
                             </div>
                         </div>
                     </div>
@@ -134,7 +140,7 @@ function PredictionTable({ tips, isPremium }: { tips: DailyTip[], isPremium?: bo
                 <thead>
                     <tr className="border-b-2 border-black text-sm md:text-base">
                         <th className="p-3 md:p-4 font-black uppercase text-center border-r border-gray-300 w-24 md:w-32">League</th>
-                        <th className="p-3 md:p-4 font-black uppercase border-r border-gray-300">Match</th>
+                        <th className="p-3 md:p-4 font-black uppercase border-r border-gray-300">Match / Title</th>
                         <th className="p-3 md:p-4 font-black text-center border-r border-gray-300 w-12 md:w-16"></th>
                         <th className="p-3 md:p-4 font-black uppercase text-center">Prediction</th>
                     </tr>
@@ -147,7 +153,7 @@ function PredictionTable({ tips, isPremium }: { tips: DailyTip[], isPremium?: bo
                                     <img src={tip.leagueLogo} alt={tip.league} className="w-8 h-8 md:w-10 md:h-10 object-contain mx-auto" />
                                 ) : (
                                     <div className="w-8 h-8 md:w-10 md:h-10 rounded-full bg-gray-200 text-gray-600 flex items-center justify-center mx-auto text-xs md:text-sm font-bold border border-gray-300">
-                                        {tip.league.substring(0, 3).toUpperCase()}
+                                        {tip.league ? tip.league.substring(0, 3).toUpperCase() : 'ALL'}
                                     </div>
                                 )}
                             </td>
@@ -155,7 +161,7 @@ function PredictionTable({ tips, isPremium }: { tips: DailyTip[], isPremium?: bo
                                 <div className="font-bold text-lg md:text-xl leading-tight">
                                     {tip.match}
                                 </div>
-                                {isPremium && (
+                                {isPremium && tip.time && (
                                     <div className="flex items-center gap-2 mt-1">
                                         <span className="bg-primary text-black text-[10px] font-bold px-1.5 py-0.5 rounded uppercase">Premium</span>
                                         <span className="text-gray-500 text-xs font-semibold">{tip.time}</span>
@@ -167,8 +173,15 @@ function PredictionTable({ tips, isPremium }: { tips: DailyTip[], isPremium?: bo
                             </td>
                             <td className="p-3 md:p-4 text-center">
                                 <span className="font-bold text-lg md:text-xl">{tip.selection}</span>
+                                {tip.codeImage && (
+                                    <div className="mt-2">
+                                        <a href={tip.codeImage} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 text-xs font-bold uppercase bg-blue-100 text-blue-700 px-3 py-1 rounded-full hover:bg-blue-200 transition-colors">
+                                            View Code Image
+                                        </a>
+                                    </div>
+                                )}
                                 {tip.status !== "PENDING" && (
-                                    <div className="mt-1 flex justify-center">
+                                    <div className="mt-2 flex justify-center">
                                         <StatusBadge status={tip.status} />
                                     </div>
                                 )}

@@ -223,14 +223,21 @@ export async function createPrediction(prevState: any, formData: FormData) {
     await verifyAdminSession()
     const matchTitle = formData.get('matchTitle') as string
     const market = formData.get('market') as string
-    const analysis = formData.get('analysis') as string
     const type = formData.get('type') as string // free, premium, banker
-    const dateStr = formData.get('date') as string
     const league = formData.get('league') as string
     const logoUrl = formData.get('logoUrl') as string
+    const imageFile = formData.get('codeImage') as File
 
-    if (!matchTitle || !market || !dateStr) {
+    if (!matchTitle || !market) {
         return { message: 'Missing required fields' }
+    }
+
+    let codeImageUrl = null;
+    try {
+        codeImageUrl = await uploadImage(imageFile)
+    } catch (e: any) {
+        console.error("Upload failed in createPrediction", e)
+        return { message: e.message || 'Image upload failed' }
     }
 
     try {
@@ -238,13 +245,12 @@ export async function createPrediction(prevState: any, formData: FormData) {
             data: {
                 matchTitle: matchTitle,
                 league: league,
-                date: new Date(dateStr),
                 market,
                 selection: market, // Use market as the prediction selection
                 odds: 1.0,
                 confidence: 50,
-                analysis,
                 resultScore: logoUrl, // Repurpose resultScore to hold the logo URL
+                codeImage: codeImageUrl, // New betting code image URL
                 isPremium: type === 'premium' || type === 'banker', // Bankers are usually premium too
                 isBanker: type === 'banker',
                 status: 'PENDING'
@@ -264,30 +270,41 @@ export async function updatePrediction(id: string, prevState: any, formData: For
     await verifyAdminSession()
     const matchTitle = formData.get('matchTitle') as string
     const market = formData.get('market') as string
-    const analysis = formData.get('analysis') as string
     const type = formData.get('type') as string
-    const dateStr = formData.get('date') as string
     const status = formData.get('status') as string
     const league = formData.get('league') as string
     const logoUrl = formData.get('logoUrl') as string
+    const imageFile = formData.get('codeImage') as File
+
+    let codeImageUrl = null;
+    try {
+        codeImageUrl = await uploadImage(imageFile)
+    } catch (e: any) {
+        console.error("Upload failed in updatePrediction", e)
+        return { message: e.message || 'Image upload failed' }
+    }
 
     try {
+        const updateData: any = {
+            matchTitle: matchTitle,
+            league: league,
+            market,
+            selection: market,
+            odds: 1.0,
+            confidence: 50,
+            resultScore: logoUrl,
+            isPremium: type === 'premium',
+            isBanker: type === 'banker',
+            status: status || 'PENDING'
+        }
+        
+        if (codeImageUrl) {
+            updateData.codeImage = codeImageUrl
+        }
+
         await prisma.prediction.update({
             where: { id },
-            data: {
-                matchTitle: matchTitle,
-                league: league,
-                date: new Date(dateStr),
-                market,
-                selection: market,
-                odds: 1.0,
-                confidence: 50,
-                analysis,
-                resultScore: logoUrl,
-                isPremium: type === 'premium',
-                isBanker: type === 'banker',
-                status: status || 'PENDING'
-            }
+            data: updateData
         })
     } catch (e) {
         console.error(e)

@@ -98,15 +98,16 @@ model Prediction {
   fixture     Fixture? @relation(fields: [fixtureId], references: [id])
   
   matchTitle  String   // Manual override or fallback
-  date        DateTime
+  date        DateTime @default(now())
   league      String?
   logoUrl     String?
+  codeImage   String?  // Image URL for betting code screenshot
   
   market      String   // e.g. "1X2", "Over 2.5"
   selection   String   // e.g. "Home Win", "Over"
   odds        Float
   confidence  Int      @default(5) // 1-10
-  analysis    String?
+  analysis    String?  // Deprecated: No longer captured in forms
   
   status      String   @default("PENDING") // PENDING, WON, LOST, VOID
   isPremium   Boolean  @default(false)
