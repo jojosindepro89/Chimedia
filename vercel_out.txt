@@ -1,0 +1,49 @@
+Retrieving project…
+Deploying joseph-basseys-projects-27fc4c7d/cmhsports
+Inspect: https://vercel.com/joseph-basseys-projects-27fc4c7d/cmhsports/A8512Dkmaa4ht8xroJhwStNMj51d [3s]
+Production: https://cmhsports-8baw6nxj2-joseph-basseys-projects-27fc4c7d.vercel.app [3s]
+https://cmhsports-8baw6nxj2-joseph-basseys-projects-27fc4c7d.vercel.appBuilding...
+Building...
+Building: Running build in Washington, D.C., USA (East) – iad1
+Building: Build machine configuration: 2 cores, 8 GB
+Building: Retrieving list of deployment files...
+Building: Downloading 136 deployment files...
+Building: Restored build cache from previous deployment (GeH1MgjNYxtFXgBaxZudD7heGA1r)
+Building: Running "vercel build"
+Building: Vercel CLI 51.6.1
+Building: Installing dependencies...
+Building: up to date in 2s
+Building: 184 packages are looking for funding
+Building: run `npm fund` for details
+Building: Detected Next.js version: 16.1.6
+Building: Running "npm run build"
+Building: > cmhsports@0.1.0 build
+Building: > prisma generate && prisma db push --accept-data-loss && next build
+Building: Environment variables loaded from .env
+Building: Prisma schema loaded from prisma/schema.prisma
+Building: ✔ Generated Prisma Client (v5.22.0) to ./node_modules/@prisma/client in 255ms
+Building: Start by importing your Prisma Client (See: https://pris.ly/d/importing-client)
+Building: Tip: Need your database queries to be 1000x faster? Accelerate offers you that and more: https://pris.ly/tip-2-accelerate
+Building: Environment variables loaded from .env
+Building: Prisma schema loaded from prisma/schema.prisma
+Building: Datasource "db": PostgreSQL database "neondb", schema "public" at "ep-winter-unit-aii55k6e.c-4.us-east-1.aws.neon.tech"
+Building: The database is already in sync with the Prisma schema.
+Building: Running generate... (Use --skip-generate to skip the generators)
+Building: Running generate... - Prisma Client
+Building: ✔ Generated Prisma Client (v5.22.0) to ./node_modules/@prisma/client in 229ms
+Building: ┌─────────────────────────────────────────────────────────┐
+Building: │  Update available 5.22.0 -> 7.8.0                       │
+Building: │                                                         │
+Building: │  This is a major update - please follow the guide at    │
+Building: │  https://pris.ly/d/major-version-upgrade                │
+Building: │                                                         │
+Building: │  Run the following to update                            │
+Building: │    npm i --save-dev prisma@latest                       │
+Building: │    npm i @prisma/client@latest                          │
+Building: └─────────────────────────────────────────────────────────┘
+Building: ▲ Next.js 16.1.6 (Turbopack)
+Building: - Environments: .env
+Building: Creating an optimized production build ...
+Building: ✓ Compiled successfully in 22.5s
+Building: Running TypeScript ...
+Error: Command "npm run build" exited with 1

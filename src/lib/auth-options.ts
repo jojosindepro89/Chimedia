@@ -55,5 +55,4 @@ export const authOptions: NextAuthOptions = {
         signIn: '/login',
     },
     secret: process.env.NEXTAUTH_SECRET || "fallback_secret_for_development_123",
-    trustHost: true,
 };
