@@ -1,30 +1,13 @@
+import { getServerSession } from "next-auth/next";
+import { authOptions } from "@/lib/auth-options";
 import { redirect } from 'next/navigation';
-import { cookies } from 'next/headers';
-import { decode } from 'next-auth/jwt';
 
 export async function getSession() {
-    try {
-        const cookieStore = await cookies();
-        const tokenCookie = cookieStore.get("__Secure-next-auth.session-token") || cookieStore.get("next-auth.session-token");
-        
-        if (!tokenCookie?.value) return null;
-        
-        const decoded = await decode({
-            token: tokenCookie.value,
-            secret: process.env.NEXTAUTH_SECRET || "fallback_secret_for_development_123"
-        });
-        
-        if (decoded) {
-            return { user: decoded };
-        }
-    } catch (e) {
-        console.error("Session decode error:", e);
-    }
-    return null;
+    return await getServerSession(authOptions);
 }
 
 export async function verifySession() {
-    const session = await getSession();
+    const session = await getServerSession(authOptions);
     if (!session) {
         redirect('/login?error=SessionExpired');
     }
@@ -32,7 +15,7 @@ export async function verifySession() {
 }
 
 export async function verifyAdminSession() {
-    const session = await getSession();
+    const session = await getServerSession(authOptions);
     
     if (!session) {
         redirect('/admin/login');

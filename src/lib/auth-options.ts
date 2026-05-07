@@ -3,6 +3,11 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import { prisma } from "@/lib/prisma";
 import bcrypt from "bcryptjs";
 
+// Force NEXTAUTH_URL to fix Vercel dynamic alias cookie drops
+if (process.env.VERCEL_URL && !process.env.NEXTAUTH_URL) {
+    process.env.NEXTAUTH_URL = "https://cmhsports.vercel.app";
+}
+
 export const authOptions: NextAuthOptions = {
     providers: [
         CredentialsProvider({
