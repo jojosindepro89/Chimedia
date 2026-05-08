@@ -7,7 +7,6 @@ import bcrypt from 'bcryptjs'
 import { writeFile, mkdir } from 'fs/promises'
 import path from 'path'
 
-// Helper: Upload Image
 // Helper: Upload Image (Cloudinary)
 import { uploadToCloudinary } from '@/lib/cloudinary'
 import { createSession, deleteSession, verifyAdminSession } from '@/lib/session'
@@ -346,6 +345,7 @@ export async function toggleUserRole(id: string) {
 export async function adminLogin() {
     // NextAuth completely handles this now via signIn('credentials')
 }
+
 
 export async function createFirstAdmin(prevState: any, formData: FormData) {
     const name = formData.get('name') as string

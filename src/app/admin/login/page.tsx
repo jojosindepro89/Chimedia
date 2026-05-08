@@ -3,6 +3,7 @@
 import { Lock, User } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { adminDirectLogin } from "./actions";
 
 export default function AdminLoginPage() {
     const router = useRouter();
@@ -17,21 +18,17 @@ export default function AdminLoginPage() {
         const formData = new FormData(e.currentTarget);
 
         try {
-            const { adminDirectLogin } = await import('@/app/actions');
             const res = await adminDirectLogin(formData);
 
-            if (res?.error) {
+            if ("error" in res) {
                 setError(res.error);
                 setLoading(false);
-            } else if (res?.success) {
-                window.location.href = "/admin"; // Hard redirect ensures session is properly initialized
             } else {
-                setError("Unexpected response from authentication server.");
-                setLoading(false);
+                window.location.href = "/admin";
             }
         } catch (err) {
             console.error("Login Error:", err);
-            setError("A critical error occurred. Please check console.");
+            setError("A critical error occurred. Please try again.");
             setLoading(false);
         }
     };
