@@ -1,12 +1,10 @@
 "use client";
 
 import { Lock, User } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { signIn } from "next-auth/react";
 import { useState } from "react";
-import { adminDirectLogin } from "./actions";
 
 export default function AdminLoginPage() {
-    const router = useRouter();
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(false);
 
@@ -14,21 +12,32 @@ export default function AdminLoginPage() {
         e.preventDefault();
         setLoading(true);
         setError("");
-        
+
         const formData = new FormData(e.currentTarget);
+        const username = formData.get("username") as string;
+        const password = formData.get("password") as string;
 
         try {
-            const res = await adminDirectLogin(formData);
+            const res = await signIn("credentials", {
+                redirect: false,
+                username,
+                password,
+            });
 
-            if ("error" in res) {
-                setError(res.error);
+            if (res?.error) {
+                setError("Invalid credentials. Access denied.");
                 setLoading(false);
+            } else if (res?.ok) {
+                // Hard redirect forces the browser to load a fresh server-rendered page
+                // with the new session cookie properly attached
+                window.location.replace("/admin");
             } else {
-                window.location.href = "/admin";
+                setError("Unexpected error. Please try again.");
+                setLoading(false);
             }
         } catch (err) {
-            console.error("Login Error:", err);
-            setError("A critical error occurred. Please try again.");
+            console.error("Login error:", err);
+            setError("A network error occurred. Please try again.");
             setLoading(false);
         }
     };
@@ -47,7 +56,7 @@ export default function AdminLoginPage() {
                     <h1 className="text-3xl font-bold text-white uppercase tracking-wider mb-2">cmhsports<span className="text-primary">.Admin</span></h1>
                     <p className="text-gray-500 text-sm">Enter your credentials to access the control panel.</p>
                 </div>
-                
+
                 <form onSubmit={handleLogin} className="space-y-6">
                     <div>
                         <label className="block text-xs uppercase font-bold text-gray-500 mb-2">Username</label>
@@ -63,17 +72,17 @@ export default function AdminLoginPage() {
                             <input name="password" type="password" className="w-full bg-black/50 border border-white/10 rounded px-12 py-3 text-white focus:outline-none focus:border-primary transition-colors" placeholder="Enter secure password" required />
                         </div>
                     </div>
-                    
+
                     {error && (
                         <div className="bg-red-500/10 border border-red-500/20 text-red-500 text-sm font-bold p-3 rounded text-center">
                             {error}
                         </div>
                     )}
-                    
+
                     <button type="submit" disabled={loading} className="w-full bg-primary text-black font-bold uppercase py-4 rounded hover:bg-yellow-500 transition-colors shadow-lg shadow-primary/20 disabled:opacity-50">
                         {loading ? "Authenticating..." : "Authenticate"}
                     </button>
-                    
+
                     <div className="text-center mt-6">
                         <a href="/" className="text-gray-500 text-xs hover:text-white transition-colors">Return to Website</a>
                     </div>

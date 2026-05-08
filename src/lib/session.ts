@@ -1,46 +1,13 @@
+import { getServerSession } from "next-auth/next";
+import { authOptions } from "@/lib/auth-options";
 import { redirect } from 'next/navigation';
-import { cookies } from 'next/headers';
-import { decode } from 'next-auth/jwt';
-
-const SECRET = process.env.NEXTAUTH_SECRET || "fallback_secret_for_development_123";
 
 export async function getSession() {
-    try {
-        const cookieStore = await cookies();
-
-        // 1. Check custom admin_direct_session cookie (set by adminDirectLogin server action)
-        const directCookie = cookieStore.get("admin_direct_session");
-        if (directCookie?.value) {
-            const decoded = await decode({
-                token: directCookie.value,
-                secret: SECRET,
-                salt: "admin_direct_session",
-            });
-            if (decoded) return { user: decoded };
-        }
-
-        // 2. Fall back to standard NextAuth JWT cookies
-        const tokenCookie =
-            cookieStore.get("__Secure-next-auth.session-token") ||
-            cookieStore.get("__Host-next-auth.session-token") ||
-            cookieStore.get("next-auth.session-token");
-
-        if (tokenCookie?.value) {
-            const decoded = await decode({
-                token: tokenCookie.value,
-                secret: SECRET,
-                salt: tokenCookie.name,
-            });
-            if (decoded) return { user: decoded };
-        }
-    } catch (error) {
-        console.error("Session decode error:", error);
-    }
-    return null;
+    return await getServerSession(authOptions);
 }
 
 export async function verifySession() {
-    const session = await getSession();
+    const session = await getServerSession(authOptions);
     if (!session) {
         redirect('/login?error=SessionExpired');
     }
@@ -48,8 +15,8 @@ export async function verifySession() {
 }
 
 export async function verifyAdminSession() {
-    const session = await getSession();
-    
+    const session = await getServerSession(authOptions);
+
     if (!session) {
         redirect('/admin/login');
     }
@@ -61,10 +28,6 @@ export async function verifyAdminSession() {
     return session;
 }
 
-// No-ops to satisfy existing code signatures without tearing them all out.
-// NextAuth handles creating and destroying sessions automatically.
-export async function createSession(user: any) { 
-}
-
-export async function deleteSession() { 
-}
+// No-ops to satisfy existing code signatures.
+export async function createSession(user: any) {}
+export async function deleteSession() {}
