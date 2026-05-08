@@ -39,6 +39,22 @@ export async function adminDirectLogin(formData: FormData): Promise<{ error: str
     })
 
     const cookieStore = await cookies()
+
+    // Clear any stale NextAuth or previous session cookies that may conflict
+    const staleCookies = [
+        '__Secure-next-auth.session-token',
+        '__Host-next-auth.session-token',
+        'next-auth.session-token',
+        'next-auth.callback-url',
+        '__Secure-next-auth.callback-url',
+        'next-auth.csrf-token',
+        '__Host-next-auth.csrf-token',
+    ]
+    for (const name of staleCookies) {
+        cookieStore.delete(name)
+    }
+
+    // Set the new admin session cookie
     cookieStore.set('admin_direct_session', token, {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
