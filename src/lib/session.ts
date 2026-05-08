@@ -2,29 +2,39 @@ import { redirect } from 'next/navigation';
 import { cookies } from 'next/headers';
 import { decode } from 'next-auth/jwt';
 
+const SECRET = process.env.NEXTAUTH_SECRET || "fallback_secret_for_development_123";
+
 export async function getSession() {
     try {
         const cookieStore = await cookies();
-        const secureCookie = cookieStore.get("__Secure-next-auth.session-token");
-        const hostCookie = cookieStore.get("__Host-next-auth.session-token");
-        const standardCookie = cookieStore.get("next-auth.session-token");
 
-        const tokenCookie = secureCookie || hostCookie || standardCookie;
-        if (!tokenCookie?.value) return null;
+        // 1. Check custom admin_direct_session cookie (set by adminDirectLogin server action)
+        const directCookie = cookieStore.get("admin_direct_session");
+        if (directCookie?.value) {
+            const decoded = await decode({
+                token: directCookie.value,
+                secret: SECRET,
+                salt: "admin_direct_session",
+            });
+            if (decoded) return { user: decoded };
+        }
 
-        const salt = tokenCookie.name;
+        // 2. Fall back to standard NextAuth JWT cookies
+        const tokenCookie =
+            cookieStore.get("__Secure-next-auth.session-token") ||
+            cookieStore.get("__Host-next-auth.session-token") ||
+            cookieStore.get("next-auth.session-token");
 
-        const decoded = await decode({
-            token: tokenCookie.value,
-            secret: process.env.NEXTAUTH_SECRET || "fallback_secret_for_development_123",
-            salt: salt
-        });
-
-        if (decoded) {
-            return { user: decoded };
+        if (tokenCookie?.value) {
+            const decoded = await decode({
+                token: tokenCookie.value,
+                secret: SECRET,
+                salt: tokenCookie.name,
+            });
+            if (decoded) return { user: decoded };
         }
     } catch (error) {
-        console.error("Manual Session Decode Error:", error);
+        console.error("Session decode error:", error);
     }
     return null;
 }

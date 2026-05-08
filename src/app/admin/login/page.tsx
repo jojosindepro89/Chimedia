@@ -1,7 +1,6 @@
 "use client";
 
 import { Lock, User } from "lucide-react";
-import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
@@ -16,25 +15,15 @@ export default function AdminLoginPage() {
         setError("");
         
         const formData = new FormData(e.currentTarget);
-        const username = formData.get("username") as string;
-        const password = formData.get("password") as string;
 
         try {
-            // Added a 10 second timeout so it kills the process if it hangs
-            const timeoutPromise = new Promise((resolve) => setTimeout(() => resolve({ error: 'Timeout' }), 10000));
-            
-            const signInPromise = signIn("credentials", {
-                redirect: false,
-                username,
-                password
-            });
-
-            const res = await Promise.race([signInPromise, timeoutPromise]) as any;
+            const { adminDirectLogin } = await import('@/app/actions');
+            const res = await adminDirectLogin(formData);
 
             if (res?.error) {
-                setError(res.error === 'Timeout' ? "Server taking too long. Please try again." : "Invalid credentials. Access denied.");
+                setError(res.error);
                 setLoading(false);
-            } else if (res?.ok) {
+            } else if (res?.success) {
                 window.location.href = "/admin"; // Hard redirect ensures session is properly initialized
             } else {
                 setError("Unexpected response from authentication server.");
