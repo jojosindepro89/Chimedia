@@ -1,13 +1,36 @@
-import { getServerSession } from "next-auth/next";
-import { authOptions } from "@/lib/auth-options";
 import { redirect } from 'next/navigation';
+import { cookies } from 'next/headers';
+import { decode } from 'next-auth/jwt';
 
 export async function getSession() {
-    return await getServerSession(authOptions);
+    try {
+        const cookieStore = await cookies();
+        const secureCookie = cookieStore.get("__Secure-next-auth.session-token");
+        const hostCookie = cookieStore.get("__Host-next-auth.session-token");
+        const standardCookie = cookieStore.get("next-auth.session-token");
+
+        const tokenCookie = secureCookie || hostCookie || standardCookie;
+        if (!tokenCookie?.value) return null;
+
+        const salt = tokenCookie.name;
+
+        const decoded = await decode({
+            token: tokenCookie.value,
+            secret: process.env.NEXTAUTH_SECRET || "fallback_secret_for_development_123",
+            salt: salt
+        });
+
+        if (decoded) {
+            return { user: decoded };
+        }
+    } catch (error) {
+        console.error("Manual Session Decode Error:", error);
+    }
+    return null;
 }
 
 export async function verifySession() {
-    const session = await getServerSession(authOptions);
+    const session = await getSession();
     if (!session) {
         redirect('/login?error=SessionExpired');
     }
@@ -15,7 +38,7 @@ export async function verifySession() {
 }
 
 export async function verifyAdminSession() {
-    const session = await getServerSession(authOptions);
+    const session = await getSession();
     
     if (!session) {
         redirect('/admin/login');
