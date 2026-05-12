@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { verifyPayment } from '@/lib/paystack';
 import { prisma } from '@/lib/prisma';
+import crypto from 'crypto';
 
 export async function POST(req: Request) {
     try {
@@ -54,7 +55,23 @@ export async function POST(req: Request) {
                 });
             }
 
-            return NextResponse.json({ success: true, isSubscription });
+            // Generate auto-login token
+            let token = null;
+            if (userId) {
+                const user = await prisma.user.findUnique({ where: { id: userId } });
+                if (user && user.email) {
+                    token = crypto.randomBytes(32).toString('hex');
+                    await prisma.passwordResetToken.create({
+                        data: {
+                            email: user.email,
+                            token,
+                            expiresAt: new Date(Date.now() + 1000 * 60 * 5) // 5 minutes
+                        }
+                    });
+                }
+            }
+
+            return NextResponse.json({ success: true, isSubscription, token });
         } else {
             return NextResponse.json({ success: false, message: 'Payment verification failed' }, { status: 400 });
         }

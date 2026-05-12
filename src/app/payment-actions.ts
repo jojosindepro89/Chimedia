@@ -4,7 +4,8 @@ import { redirect } from "next/navigation";
 import { initializePayment } from "@/lib/paystack";
 import { prisma } from "@/lib/prisma";
 import { hash } from "bcryptjs";
-import { createSession, getSession } from "@/lib/session";
+import { getSession } from "@/lib/session";
+import crypto from "crypto";
 
 function getBaseUrl() {
     if (process.env.NEXT_PUBLIC_APP_URL) return process.env.NEXT_PUBLIC_APP_URL;
@@ -79,8 +80,17 @@ export async function registerAndPay(formData: FormData) {
             });
         }
 
-        await createSession({ name: user.name || '', email: user.email || '', role: user.role });
-        redirect('/dashboard');
+        const token = crypto.randomBytes(32).toString('hex');
+        await prisma.passwordResetToken.create({
+            data: {
+                email,
+                token,
+                expiresAt: new Date(Date.now() + 1000 * 60 * 5) // 5 minutes
+            }
+        });
+
+        // Redirect to login with auto-login token
+        redirect(`/login?token=${token}`);
         return;
     }
 
@@ -92,8 +102,6 @@ export async function registerAndPay(formData: FormData) {
             data: { name, email, password: hashedPassword, role: 'USER' }
         });
     }
-
-    await createSession({ name: user.name || '', email: user.email || '', role: user.role });
 
     const baseUrl = getBaseUrl();
     const callbackUrl = `${baseUrl}/payment/callback?plan=${plan}&userId=${user.id}`;

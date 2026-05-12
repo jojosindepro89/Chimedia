@@ -1,15 +1,32 @@
 "use client";
 
 import Link from "next/link";
-import { Lock, Mail, ArrowRight } from "lucide-react";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { Lock, Mail, ArrowRight, CheckCircle } from "lucide-react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useState, useEffect, Suspense } from "react";
 import { signIn } from "next-auth/react";
 
-export default function LoginPage() {
+function LoginForm() {
     const router = useRouter();
+    const searchParams = useSearchParams();
+    const isRegistered = searchParams.get("registered") === "1";
+    const prefillEmail = searchParams.get("email") || "";
+    const token = searchParams.get("token");
+
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
+
+    useEffect(() => {
+        if (token) {
+            setLoading(true);
+            signIn("credentials", { redirect: true, token, callbackUrl: "/dashboard" })
+                .catch(err => {
+                    console.error("Auto-login error:", err);
+                    setError("Auto-login failed. Please sign in manually.");
+                    setLoading(false);
+                });
+        }
+    }, [token]);
 
     const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -21,7 +38,7 @@ export default function LoginPage() {
         const password = formData.get("password") as string;
 
         try {
-            const timeoutPromise = new Promise((resolve) => setTimeout(() => resolve({ error: 'Timeout' }), 10000));
+            const timeoutPromise = new Promise((resolve) => setTimeout(() => resolve({ error: 'Timeout' }), 15000));
             const signInPromise = signIn("credentials", { redirect: false, username: email, password });
             const res = await Promise.race([signInPromise, timeoutPromise]) as any;
 
@@ -56,7 +73,12 @@ export default function LoginPage() {
                         <p className="text-gray-400 text-sm">Sign in to access premium content</p>
                     </div>
 
-
+                    {(isRegistered || token) && (
+                        <div className="bg-green-500/10 border border-green-500/30 text-green-400 text-sm font-bold p-3 rounded flex items-center gap-2 mb-4">
+                            <CheckCircle className="w-4 h-4 flex-shrink-0" />
+                            {token ? "Account active! Logging you in..." : "Account created successfully! Sign in below to access your dashboard."}
+                        </div>
+                    )}
 
                     {error && (
                         <div className="bg-red-500/10 border border-red-500/20 text-red-500 text-sm font-bold p-3 rounded text-center mb-4">
@@ -69,7 +91,14 @@ export default function LoginPage() {
                             <label className="block text-xs uppercase font-bold text-gray-500 mb-2">Email Address</label>
                             <div className="relative">
                                 <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" />
-                                <input type="email" name="email" required className="w-full bg-black/50 border border-white/10 rounded px-10 py-3 text-white focus:outline-none focus:border-primary transition-colors placeholder-gray-600" placeholder="you@example.com" />
+                                <input
+                                    type="email"
+                                    name="email"
+                                    required
+                                    defaultValue={prefillEmail}
+                                    className="w-full bg-black/50 border border-white/10 rounded px-10 py-3 text-white focus:outline-none focus:border-primary transition-colors placeholder-gray-600"
+                                    placeholder="you@example.com"
+                                />
                             </div>
                         </div>
                         <div>
@@ -102,5 +131,13 @@ export default function LoginPage() {
                 </div>
             </div>
         </div>
+    );
+}
+
+export default function LoginPage() {
+    return (
+        <Suspense fallback={<div className="min-h-screen bg-black flex items-center justify-center"><div className="text-white">Loading...</div></div>}>
+            <LoginForm />
+        </Suspense>
     );
 }

@@ -34,6 +34,15 @@ function PaymentCallbackContent() {
                         if (data.isSubscription) {
                             setIsSub(true);
                         }
+                        // Redirect to login — NextAuth session must be established via signIn()
+                        // Use a short delay so user sees the success message
+                        setTimeout(() => {
+                            if (data.token) {
+                                router.push(`/login?token=${data.token}`);
+                            } else {
+                                router.push("/login?registered=1");
+                            }
+                        }, 2500);
                     } else {
                         setStatus('error');
                     }
@@ -58,20 +67,16 @@ function PaymentCallbackContent() {
     }
 
     if (status === 'success') {
-        setTimeout(() => {
-            router.push("/dashboard");
-        }, 2000);
-
         return (
             <div className="flex flex-col items-center animate-fade-in">
                 <CheckCircle className="w-12 h-12 text-green-500 mb-4" />
                 <h2 className="text-xl font-bold uppercase mb-2">Payment Successful!</h2>
                 <p className="text-gray-400 mb-6 text-center">
                     {isSub ? "Your membership is now active." : "Thank you for your purchase. Your order has been confirmed."}<br/>
-                    Redirecting to your dashboard...
+                    Please sign in to access your dashboard.
                 </p>
-                <Link href="/dashboard" className="bg-primary text-black font-bold uppercase px-8 py-3 rounded hover:bg-yellow-500 transition-colors">
-                    Go to Dashboard
+                <Link href="/login?registered=1" className="bg-primary text-black font-bold uppercase px-8 py-3 rounded hover:bg-yellow-500 transition-colors">
+                    Sign In to Dashboard
                 </Link>
             </div>
         );
