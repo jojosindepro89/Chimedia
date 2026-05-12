@@ -1,14 +1,20 @@
 import { prisma } from "@/lib/prisma";
 import Link from "next/link";
 import { ArrowLeft, Package, Search } from "lucide-react";
-
-const DEMO_USER_EMAIL = 'user@example.com';
+import { getSession } from "@/lib/session";
+import { redirect } from "next/navigation";
 
 export const dynamic = 'force-dynamic';
 
 export default async function OrdersPage() {
+    const session = await getSession();
+
+    if (!session || !session.user || !session.user.email) {
+        redirect('/login');
+    }
+
     const user = await prisma.user.findUnique({
-        where: { email: DEMO_USER_EMAIL },
+        where: { email: session.user.email },
         include: {
             orders: {
                 include: { items: { include: { product: true } } },
@@ -18,7 +24,7 @@ export default async function OrdersPage() {
     });
 
     if (!user) {
-        return <div className="p-8 text-white">User not found. Please run the demo seed script.</div>;
+        return <div className="p-8 text-white">User not found. Please log in again.</div>;
     }
 
     const orders = user.orders;

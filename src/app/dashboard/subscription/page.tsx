@@ -1,20 +1,25 @@
 import { prisma } from "@/lib/prisma";
 import Link from "next/link";
 import { ArrowLeft, Crown, CheckCircle, AlertCircle } from "lucide-react";
-
-// For demo purposes, we are fetching the specific demo user
-const DEMO_USER_EMAIL = 'user@example.com';
+import { getSession } from "@/lib/session";
+import { redirect } from "next/navigation";
 
 export const dynamic = 'force-dynamic';
 
 export default async function SubscriptionPage() {
+    const session = await getSession();
+
+    if (!session || !session.user || !session.user.email) {
+        redirect('/login');
+    }
+
     const user = await prisma.user.findUnique({
-        where: { email: DEMO_USER_EMAIL },
+        where: { email: session.user.email },
         include: { subscription: true }
     });
 
     if (!user) {
-        return <div className="p-8 text-white">User not found. Please run the demo seed script.</div>;
+        return <div className="p-8 text-white">User not found. Please log in again.</div>;
     }
 
     const sub = user.subscription;
@@ -71,9 +76,9 @@ export default async function SubscriptionPage() {
                             </div>
 
                             <div className="mt-8 flex gap-4">
-                                <button className="flex-1 bg-primary text-black font-bold uppercase py-3 rounded hover:bg-yellow-500 transition-colors">
+                                <Link href="/membership" className="flex-1 text-center bg-primary text-black font-bold uppercase py-3 rounded hover:bg-yellow-500 transition-colors">
                                     {sub && sub.status === 'ACTIVE' ? 'Extend Plan' : 'Upgrade to Premium'}
-                                </button>
+                                </Link>
                                 {sub && sub.status === 'ACTIVE' && (
                                     <button className="flex-1 bg-zinc-800 text-white font-bold uppercase py-3 rounded hover:bg-zinc-700 transition-colors border border-white/10">
                                         Cancel Plan
