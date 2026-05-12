@@ -1,8 +1,22 @@
 import { prisma } from "@/lib/prisma";
 import Link from "next/link";
-import { Lock, TrendingUp, Trophy } from "lucide-react";
+import { Lock, TrendingUp, Trophy, Unlock } from "lucide-react";
+import { getSession } from "@/lib/session";
 
 export default async function PremiumPredictions() {
+    const session = await getSession();
+    let isPremiumMember = false;
+
+    if (session?.user?.email) {
+        const userWithSub = await prisma.user.findUnique({
+            where: { email: session.user.email },
+            include: { subscription: true }
+        });
+        if (userWithSub?.subscription?.status === 'ACTIVE' && new Date(userWithSub.subscription.endDate) > new Date()) {
+            isPremiumMember = true;
+        }
+    }
+
     const premiumPredictions = await prisma.prediction.findMany({
         where: { isPremium: true },
         orderBy: { date: 'desc' },
@@ -36,19 +50,44 @@ export default async function PremiumPredictions() {
                         </div>
                     </div>
 
-                    <div className="bg-zinc-950 p-4 rounded border border-white/5 mb-4 backdrop-blur-sm relative">
-                        <div className="flex justify-between items-center relative z-10">
-                            <div>
-                                <span className="text-xs text-gray-500 uppercase block mb-1">Prediction</span>
-                                <span className="text-white font-bold">{prediction.market}</span>
+                    <div className="bg-zinc-950 p-4 rounded border border-white/5 mb-4 relative overflow-hidden group/lock">
+                        {/* The actual content */}
+                        <div className={`transition-all duration-300 ${!isPremiumMember ? 'blur-sm select-none opacity-50' : ''}`}>
+                            <div className="flex justify-between items-center mb-2">
+                                <div>
+                                    <span className="text-xs text-gray-500 uppercase block mb-1">Market</span>
+                                    <span className="text-white font-bold">{prediction.market}</span>
+                                </div>
+                                <div className="text-right">
+                                    <span className="text-xs text-gray-500 uppercase block mb-1">Odds</span>
+                                    <span className="text-primary font-bold">{prediction.odds}</span>
+                                </div>
+                            </div>
+                            <div className="pt-2 border-t border-white/10">
+                                <span className="text-xs text-gray-500 uppercase block mb-1">Pick</span>
+                                <span className="text-white font-bold text-lg">{prediction.selection}</span>
                             </div>
                         </div>
+
+                        {/* Lock Overlay for non-premium users */}
+                        {!isPremiumMember && (
+                            <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/40 z-10">
+                                <Lock className="w-6 h-6 text-primary mb-2" />
+                                <span className="text-xs font-bold text-white uppercase tracking-wider">VIP Only</span>
+                            </div>
+                        )}
                     </div>
 
-                    <div className="flex justify-end items-center">
-                        <Link href="/membership" className="bg-white/10 hover:bg-primary text-white hover:text-black p-2 rounded transition-colors" title="Unlock Prediction">
-                            <Lock className="w-5 h-5" />
-                        </Link>
+                    <div className="flex justify-between items-center">
+                        {!isPremiumMember ? (
+                            <Link href="/membership" className="text-xs font-bold uppercase text-primary hover:text-white transition-colors flex items-center gap-1">
+                                <Lock className="w-3 h-3" /> Unlock Now
+                            </Link>
+                        ) : (
+                            <span className="text-xs font-bold uppercase text-green-500 flex items-center gap-1">
+                                <Unlock className="w-3 h-3" /> Unlocked
+                            </span>
+                        )}
                     </div>
                 </div>
             ))}
